@@ -4,31 +4,27 @@ import pymongo
 from flask_cors import CORS
 from bson.json_util import dumps, loads
 import os
-from azure.storage.blob import BlockBlobService, PublicAccess
 from celery import Celery
 import subprocess
 import uuid
+
+from AzureBlobMechanism import AzureBlobMechanism
+from MinioBlobMechanism import MinioBlobMechanism
 
 app = Flask(__name__)
 CORS(app)
 
 db_client = pymongo.MongoClient(os.environ['SPASS_CONNECTION_STRING']).spassDatabase
-seismic_blob = BlockBlobService(account_name='seismicdata', account_key=os.environ['SPASS_DATA_BLOB_KEY'])
-seismic_blob.create_container('seismic-data')
-seismic_blob.set_container_acl('seismic-data', public_access=PublicAccess.Container)
-seismic_blob.create_container('seismic-tools')
-seismic_blob.set_container_acl('seismic-tools', public_access=PublicAccess.Container)
-seismic_blob.create_container('seismic-results')
-seismic_blob.set_container_acl('seismic-results', public_access=PublicAccess.Container)
-
+# blobMechanism = AzureBlobMechanism()
+blobMechanism = MinioBlobMechanism()
 celery = Celery(app.name, broker=os.environ['SPASS_CELERY_BROKER'], backend=os.environ['SPASS_CELERY_BROKER'])
 
 @celery.task
 def submit_celery(tool_name, data_name, args):
     file_id = str(uuid.uuid4())
     db_client.statusCollection.insert_one({'status': 'Executing', 'job_id': file_id})
-    seismic_blob.get_blob_to_path('seismic-tools', tool_name, tool_name)
-    seismic_blob.get_blob_to_path('seismic-data', data_name, data_name)
+    # seismic_blob.get_blob_to_path('seismic-tools', tool_name, tool_name)
+    # seismic_blob.get_blob_to_path('seismic-data', data_name, data_name)
     
     cmd_args = ''
     for i in range(1, len(args) + 1):
@@ -40,7 +36,7 @@ def submit_celery(tool_name, data_name, args):
     os.system('rm -rf ' + tool_name + ' ' + data_name)
     file_name = file_id + '.tar.gz'
     os.system('tar -czvf ' + file_name+ ' *.su')
-    seismic_blob.create_blob_from_path('seismic-results', file_name, file_name)
+    # seismic_blob.create_blob_from_path('seismic-results', file_name, file_name)
     os.system('rm -rf *.su ' + file_name)
 
     data_register = {}
@@ -140,7 +136,7 @@ def get_files_blob():
 
 def upload_to_azure(data_name, container_name, data_content):
     data_content.save(data_name)
-    seismic_blob.create_blob_from_path(container_name, data_name, data_name)
+    # seismic_blob.create_blob_from_path(container_name, data_name, data_name)
     os.system('rm -rf '+ data_name)
 
 @app.route('/api/tools/', methods=['GET'])
@@ -148,9 +144,10 @@ def get_tools_blob():
     return json.dumps(list_files('seismic-tools'))
 
 def list_files(container_name):
-    data = seismic_blob.list_blobs(container_name)
-    all_names = [d.name for d in data]
-    return all_names
+    # data = seismic_blob.list_blobs(container_name)
+    # all_names = [d.name for d in data]
+    # return all_names
+    pass
 
 @app.route('/api/tools/upload/', methods=['POST'])
 def upload_tool():
@@ -194,7 +191,8 @@ def delete_data(name):
     return 'Deleted'
 
 def delete_blob(blob_name, container_name):
-    seismic_blob.delete_blob(container_name, blob_name)
+    # seismic_blob.delete_blob(container_name, blob_name)
+    pass
 
 if __name__ == "__main__":
     app.run('0.0.0.0', 5000)
