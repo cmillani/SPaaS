@@ -33,6 +33,8 @@ def submit_celery(tool_name, data_name, args):
     for i in range(1, len(args) + 1):
         cmd_args = cmd_args + ' ' + args[str(i)]
     
+    os.system('chmod +x ' + tool_name)
+
     total_cmd = './' + tool_name + cmd_args
     
     os.system(total_cmd)
