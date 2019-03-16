@@ -14,8 +14,6 @@ CORS(app)
 
 db_client = pymongo.MongoClient(os.environ['SPASS_CONNECTION_STRING']).spassDatabase
 
-### Leave only the desired blob platform to be used uncommented
-# blobMechanism = AzureBlobMechanism()
 blobMechanism = BlobMechanismFactory.getMechanism()
 
 celery = Celery(app.name, broker=os.environ['SPASS_CELERY_BROKER'], backend=os.environ['SPASS_CELERY_BROKER'])
