@@ -7,9 +7,7 @@ import os
 from celery import Celery
 import subprocess
 import uuid
-
-from AzureBlobMechanism import AzureBlobMechanism
-from MinioBlobMechanism import MinioBlobMechanism
+from Mechanisms.Blob.BlobMechanismFactory import BlobMechanismFactory
 
 app = Flask(__name__)
 CORS(app)
@@ -18,7 +16,7 @@ db_client = pymongo.MongoClient(os.environ['SPASS_CONNECTION_STRING']).spassData
 
 ### Leave only the desired blob platform to be used uncommented
 # blobMechanism = AzureBlobMechanism()
-blobMechanism = MinioBlobMechanism()
+blobMechanism = BlobMechanismFactory.getMechanism()
 
 celery = Celery(app.name, broker=os.environ['SPASS_CELERY_BROKER'], backend=os.environ['SPASS_CELERY_BROKER'])
 

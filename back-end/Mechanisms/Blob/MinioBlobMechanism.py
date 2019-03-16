@@ -1,5 +1,7 @@
 from minio import Minio
 from minio.error import ResponseError
+from BlobConfiguration import *
+import os
 
 class BlobFile:
     def __init__(self, name):
@@ -7,20 +9,18 @@ class BlobFile:
 
 class MinioBlobMechanism:
 
-    minioClient = None
-
     def __init__(self):
-        self.minioClient = Minio('127.0.0.1:9000', 
-                            access_key='V1EWU3R30LAXGS91GO5A', 
-                            secret_key='+EialmsTicKnmjwUGBKlplf3PJMzr25FWhLhDcRM', 
+        self.minioClient = Minio(os.environ['MINIO_ENDPOINT'], 
+                            access_key=os.environ['MINIO_ACCESS_KEY'], 
+                            secret_key=os.environ['MINIO_SECRET_KEY'], 
                             secure=False)
 
-        if not self.minioClient.bucket_exists('seismic-data'):
-            self.minioClient.make_bucket('seismic-data')
-        if not self.minioClient.bucket_exists('seismic-tools'):
-            self.minioClient.make_bucket('seismic-tools')
-        if not self.minioClient.bucket_exists('seismic-results'):
-            self.minioClient.make_bucket('seismic-results')
+        if not self.minioClient.bucket_exists(DataBlob):
+            self.minioClient.make_bucket(DataBlob)
+        if not self.minioClient.bucket_exists(ToolsBlob):
+            self.minioClient.make_bucket(ToolsBlob)
+        if not self.minioClient.bucket_exists(ResultsBlob):
+            self.minioClient.make_bucket(ResultsBlob)
 
     def get_blob_to_path(self, container_name, blob_name, file_path):
         self.minioClient.fget_object(container_name, blob_name, file_path)

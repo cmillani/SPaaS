@@ -4,6 +4,7 @@ Seismic processing as a service (SPaaS) makes it easier for people to run their 
 
 # Configuration
 
+Create a copy of *tools/config.sh.example* 
 Edit *tools/config.sh*, changing all connection urls and execute the command
 
 ```sh
