@@ -1,0 +1,105 @@
+const Provider = require('oidc-provider');
+const keystore = require('./keystore.json');
+const redisAdapter = require('./redis_adapter');
+const account = require('./account');
+const express = require('express');
+const path = require('path');
+const bodyParser = require('body-parser');
+
+const configuration = {
+  // ... see available options /docs/configuration.md
+  claims: {
+    // scope: [claims] format
+    openid: ['sub'],
+    email: ['email', 'email_verified'],
+  },
+  findById: account.findById,
+  interactionUrl(ctx) {
+    return `/interaction/${ctx.oidc.uuid}`;
+  },
+  formats: {
+    AccessToken: 'jwt',
+  },
+  features: {
+    claimsParameter: true,
+    discovery: true,
+    encryption: true,
+    introspection: true,
+    registration: true,
+    request: true,
+    revocation: true,
+    sessionManagement: true,
+  }
+};
+const clients = [{
+  client_id: 'foo',
+  redirect_uris: ['https://example.com'],
+  response_types: ['id_token token'],
+  grant_types: ['implicit'],
+  token_endpoint_auth_method: 'none',
+  // + other client properties
+}];
+ 
+const oidc = new Provider('http://localhost:3000', configuration);
+ 
+let server;
+(async () => {
+  await oidc.initialize({ keystore, clients, adapter: redisAdapter });
+
+  const expressApp = express();
+
+  expressApp.set('trust proxy', true);
+  expressApp.set('view engine', 'ejs');
+  expressApp.set('views', path.resolve(__dirname, 'views'));
+
+  const parse = bodyParser.urlencoded({ extended: false });
+
+  expressApp.get('/interaction/:grant', async (req, res) => {
+    oidc.interactionDetails(req).then((details) => {
+      console.log('see what else is available to you for interaction views', details);
+
+      const view = (() => {
+        switch (details.interaction.reason) {
+          case 'consent_prompt':
+          case 'client_not_authorized':
+            return 'interaction';
+          default:
+            return 'login';
+        }
+      })();
+
+      res.render(view, { details });
+    });
+  });
+
+  expressApp.post('/interaction/:grant/confirm', parse, (req, res) => {
+    oidc.interactionFinished(req, res, {
+      consent: {
+        // TODO: add offline_access checkbox to confirm too
+      },
+    });
+  });
+
+  expressApp.post('/interaction/:grant/login', parse, (req, res, next) => {
+    account.authenticate(req.body.email, req.body.password)
+      .then(account => oidc.interactionFinished(req, res, {
+        login: {
+          account: account.accountId,
+          remember: !!req.body.remember,
+          ts: Math.floor(Date.now() / 1000),
+        },
+        consent: {
+          rejectedScopes: req.body.remember ? [] : ['offline_access'],
+        },
+      })).catch(next);
+  });
+
+  // leave the rest of the requests to be handled by oidc-provider, there's a catch all 404 there
+  expressApp.use(oidc.callback);
+
+  expressApp.listen(3000);
+})().catch((err) => {
+  if (server && server.listening) server.close();
+  console.error(err);
+  process.exitCode = 1;
+});
