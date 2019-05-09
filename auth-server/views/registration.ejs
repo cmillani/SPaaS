@@ -130,20 +130,17 @@
   </head>
   <body>
     <div class="login-card">
-      <h1>Sign-in</h1>
-      <form autocomplete="off" action="/interaction/<%= details.uuid %>/login" method="post">
+      <h1>Register</h1>
+      <form autocomplete="off" action="/interaction/<%= details.uuid %>/registration" method="post">
         <input required type="email" name="email" placeholder="Enter an email" <% if (!details.params.login_hint) { %>autofocus="on"<% } else { %> value="<%= details.params.login_hint %>" <% } %>>
         <input required type="password" name="password" placeholder="and password" <% if (details.params.login_hint) { %>autofocus="on"<% } %>>
 
         <label><input type="checkbox" name="remember" value="yes" checked="yes">Stay signed in</label>
 
-        <button type="submit" name="submit" class="login login-submit">Sign-in</button>
+        <button type="submit" name="submit" class="login login-submit">Sign-up</button>
       </form>
       <div class="login-help">
         <a href="<%= details.returnTo %>">[ Cancel ]</a>
-      </div>
-      <div class="login-help">
-        <a href="/interaction/<%= details.uuid %>/registration">[ Register ]</a>
       </div>
     </div>
     <div class="login-card">

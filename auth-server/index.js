@@ -72,6 +72,14 @@ let server;
     });
   });
 
+  expressApp.get('/interaction/:grant/registration', async (req, res) => {
+    oidc.interactionDetails(req).then((details) => {
+      console.log('see what else is available to you for interaction views', details);
+
+      res.render('registration', { details });
+    });
+  })
+
   expressApp.post('/interaction/:grant/confirm', parse, (req, res) => {
     oidc.interactionFinished(req, res, {
       consent: {
@@ -82,6 +90,20 @@ let server;
 
   expressApp.post('/interaction/:grant/login', parse, (req, res, next) => {
     account.authenticate(req.body.email, req.body.password)
+      .then(account => oidc.interactionFinished(req, res, {
+        login: {
+          account: account.accountId,
+          remember: !!req.body.remember,
+          ts: Math.floor(Date.now() / 1000),
+        },
+        consent: {
+          rejectedScopes: req.body.remember ? [] : ['offline_access'],
+        },
+      })).catch(next);
+  });
+
+  expressApp.post('/interaction/:grant/registration', parse, (req, res, next) => {
+    account.create(req.body.email, req.body.password)
       .then(account => oidc.interactionFinished(req, res, {
         login: {
           account: account.accountId,

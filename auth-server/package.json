@@ -12,6 +12,7 @@
     "express": "^4.16.4",
     "ioredis": "^4.9.0",
     "lodash": "^4.17.11",
+    "mongodb": "^3.2.4",
     "oidc-provider": "^5.5.5"
   },
   "devDependencies": {
