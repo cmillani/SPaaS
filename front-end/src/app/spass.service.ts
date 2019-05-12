@@ -16,7 +16,7 @@ const DELETE_DATA_ENDPOINT = environment.deleteDataEndpoint;
 const GET_PARAMETERS_ENDPOINT = environment.getParametersEndpoint;
 const SUBMIT_TASK_ENDPOINT = environment.submitTaskEndpoint;
 const GET_RESULTS_BLOB_ENDPOINT = environment.getResultsBlobEndpoints;
-const  STATUS_ENDPOINT = environment.statusEndpoint;
+const STATUS_ENDPOINT = environment.statusEndpoint;
 
 @Injectable()
 export class SpassService {
