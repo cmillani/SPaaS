@@ -15,8 +15,9 @@ var db = null;
 });
 
 class Account {
-  constructor(id) {
+  constructor(id, email) {
     this.accountId = id; // the property named accountId is important to oidc-provider
+    this.email = email;
   }
 
   // claims() should return or resolve with an object with claims that are mapped 1:1 to
@@ -24,6 +25,7 @@ class Account {
   claims() {
     return Object.assign({}, {
       sub: this.accountId,
+      email: this.email
     });
   }
 
@@ -32,7 +34,7 @@ class Account {
     // one
     let user = await db.collection('usersCollection').findOne({"_id" : ObjectId(id)});
     if (user != null) {
-      return new Account(id);
+      return new Account(id, user.email);
     } else {
       return null;
     }
@@ -45,7 +47,7 @@ class Account {
 
     return db.collection('usersCollection').findOne({'email': lowercasedEmail}).then( user => {
       if (user != null && user.password == password) {
-        return new this(user._id);
+        return new this(user._id, user.email);
       } else {
         throw "User Not Found";
       }

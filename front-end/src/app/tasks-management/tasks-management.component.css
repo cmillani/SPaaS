@@ -1,6 +1,7 @@
 .sidemenu {
     padding-top: 20px;
-    padding-right: 1600px;
+    width: 150px;
+    /* padding-right: 1600px; */
     padding-left: 10px;
 }
 
@@ -11,7 +12,8 @@
 
 .custom-table {
     position: absolute;
-    top: 110px;
+    top: 150px;
+    padding-left: 100px;
 }
 
 .custom-forms {

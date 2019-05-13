@@ -5,6 +5,7 @@ const account = require('./account');
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
+var cors = require('cors');
 
 const configuration = {
   // ... see available options /docs/configuration.md
@@ -32,10 +33,10 @@ const configuration = {
   }
 };
 const clients = [{
-  client_id: 'foo',
-  redirect_uris: ['https://example.com'],
-  response_types: ['id_token token'],
-  grant_types: ['implicit'],
+  client_id: 'spaas',
+  redirect_uris: ['http://localhost:4200', 'http://localhost:4200/toolsmanager', 'http://localhost:4200/login'],
+  response_types: ['code'],
+  grant_types: ['authorization_code'],
   token_endpoint_auth_method: 'none',
   // + other client properties
 }];
@@ -52,11 +53,12 @@ let server;
   expressApp.set('view engine', 'ejs');
   expressApp.set('views', path.resolve(__dirname, 'views'));
 
+  expressApp.use(cors());
+
   const parse = bodyParser.urlencoded({ extended: false });
 
   expressApp.get('/interaction/:grant', async (req, res) => {
     oidc.interactionDetails(req).then((details) => {
-      console.log('see what else is available to you for interaction views', details);
 
       const view = (() => {
         switch (details.interaction.reason) {

@@ -24,10 +24,21 @@ import {
     OpenIDImplicitFlowConfiguration,
 } from 'angular-auth-oidc-client';
 
-const oidc_configuration = '../assets/auth.clientConfiguration.json';
-// if your config is on server side
-// const oidc_configuration = ${window.location.origin}/api/ClientAppSettings
- 
+const oidcConfig = {
+  "stsServer": "http://localhost:3000",
+  "redirect_url": "http://localhost:4200/login",
+	"client_id": "spaas",
+  "response_type": "code",
+	"scope": "openid email",
+	"post_logout_redirect_uri": "http://localhost:4200",
+	"start_checksession": true,
+	"post_login_route": "/toolsmanager",
+	"forbidden_route": "/forbidden",
+	"unauthorized_route": "/unauthorized",
+	"log_console_warning_active": true,
+	"log_console_debug_active": true,
+	"max_id_token_iat_offset_allowed_in_seconds": 10
+} 
  
 export function loadConfig(oidcConfigService: OidcConfigService) {
   return () => 
@@ -73,7 +84,7 @@ export class AppModule {
         this.oidcConfigService.onConfigurationLoaded.subscribe(() => {
           const oidcFlowConfig = new OpenIDImplicitFlowConfiguration();
           //merge configuration loaded from assets/auth.clientConfiguration.json
-          Object.assign(oidcFlowConfig, this.oidcConfigService.clientConfiguration);
+          Object.assign(oidcFlowConfig, oidcConfig, this.oidcConfigService.clientConfiguration);
           this.oidcSecurityService.setupModule(oidcFlowConfig, this.oidcConfigService.wellKnownEndpoints);
         });
     }
