@@ -7,7 +7,7 @@ const ObjectId = mongodb.ObjectId;
 var db = null;
 
 (async () => {
-  let client = await MongoClient.connect(process.env.SPASS_CONNECTION_STRING + '/spassDatabase');
+  let client = await MongoClient.connect(process.env.SPASS_CONNECTION_STRING);
   db = client.db("spassDatabase")
   console.log(`DB connection set`);
 })().catch( err => {
