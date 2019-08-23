@@ -1,4 +1,6 @@
 const _ = require('lodash');
+const saltRounds = 10;
+const bcrypt = require('bcrypt');
 const crypto = require("crypto");
 const mongodb = require("mongodb")
 const MongoClient = mongodb.MongoClient;
@@ -46,8 +48,8 @@ class Account {
     const lowercasedEmail = String(email).toLowerCase();
 
     return db.collection('usersCollection').findOne({'email': lowercasedEmail}).then( user => {
-      if (user != null && user.password == password) {
-        return new this(user._id, user.email);
+      if (user != null && bcrypt.compareSync(password, user.password)) {
+        return new this(user._id, user.email); 
       } else {
         throw "User Not Found";
       }
@@ -58,12 +60,13 @@ class Account {
     if (password == null) throw 'password must be provided';
     if (email == null) throw 'email must be provided';
     const lowercasedEmail = String(email).toLowerCase();
-    
+
     let user = await db.collection('usersCollection').findOne({'email': lowercasedEmail});
     if (user == null) {
+      let hahsedPassword = bcrypt.hashSync(password, saltRounds)
       let result = await db.collection('usersCollection').insertOne({
         email: lowercasedEmail,
-        password: password
+        password: hahsedPassword
       });
       return new this(result.insertedId);
     } else {
