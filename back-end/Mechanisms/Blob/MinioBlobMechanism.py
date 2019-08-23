@@ -1,6 +1,6 @@
 from minio import Minio
 from minio.error import ResponseError
-from BlobConfiguration import *
+from .BlobConfiguration import *
 import os
 
 class BlobFile:

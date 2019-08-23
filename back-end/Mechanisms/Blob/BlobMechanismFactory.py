@@ -1,5 +1,5 @@
-from AzureBlobMechanism import AzureBlobMechanism
-from MinioBlobMechanism import MinioBlobMechanism
+from .AzureBlobMechanism import AzureBlobMechanism
+from .MinioBlobMechanism import MinioBlobMechanism
 import os
 
 class BlobMechanismFactory:

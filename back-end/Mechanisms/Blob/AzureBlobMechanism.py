@@ -1,5 +1,5 @@
 from azure.storage.blob import BlockBlobService, PublicAccess
-from BlobConfiguration import *
+from .BlobConfiguration import *
 import os
 
 class AzureBlobMechanism:
