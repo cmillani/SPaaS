@@ -16,6 +16,7 @@ import { SpassService } from './spass.service';
 import { DataManagementComponent } from './data-management/data-management.component';
 import { ToolsManagementComponent } from './tools-management/tools-management.component';
 import { TasksManagementComponent } from './tasks-management/tasks-management.component';
+import { NavigationBarComponent } from './navigationBar/navigationBar.component'
 import { AuthModule, 
          ConfigResult, 
          OidcConfigService, 
@@ -31,6 +32,7 @@ export function loadConfig(oidcConfigService: OidcConfigService) {
 
 @NgModule({
   declarations: [
+    NavigationBarComponent,
     AppComponent,
     DefinitionComponent,
     StatusComponent,

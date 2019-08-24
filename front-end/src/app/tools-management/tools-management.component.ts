@@ -9,27 +9,18 @@ import { OidcSecurityService } from 'angular-auth-oidc-client';
   styleUrls: ['./tools-management.component.css']
 })
 export class ToolsManagementComponent implements OnInit {
-  loggedMail: string;
   fileToUpload: File;
   nameOfFile: string;
   fileNames: any;
   jobParams: string;
 
-  constructor(private apiService: SpassService, private router: Router, public oidcSecurityService: OidcSecurityService) { }
+  constructor(private apiService: SpassService, private router: Router) { }
 
   ngOnInit() {
-    this.loggedMail = localStorage.getItem('loggedMail');
-    if (!this.loggedMail) {
-      this.router.navigate(['/', 'login']);
-    }
     this.fileToUpload = null;
     this.apiService.getTools().subscribe(response => {
       this.fileNames = response.replace('[', '').replace(']', '').split('"').join('').replace(/\s/g, '').split(',');
     });
-  }
-
-  logout() {
-    this.oidcSecurityService.logoff();
   }
 
   onFileChange(files: FileList) {
