@@ -35,6 +35,7 @@ const configuration = {
 const clients = [{
   client_id: 'spaas',
   redirect_uris: ['http://localhost:4200', 'http://localhost:4200/toolsmanager', 'http://localhost:4200/login'],
+  post_logout_redirect_uris: ['http://localhost:4200', 'http://localhost:4200/login'],
   response_types: ['code'],
   grant_types: ['authorization_code'],
   token_endpoint_auth_method: 'none',

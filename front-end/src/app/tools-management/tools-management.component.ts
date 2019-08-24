@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { SpassService } from '../spass.service';
 import { Router } from '@angular/router';
+import { OidcSecurityService } from 'angular-auth-oidc-client';
 
 @Component({
   selector: 'app-tools-management',
@@ -14,7 +15,7 @@ export class ToolsManagementComponent implements OnInit {
   fileNames: any;
   jobParams: string;
 
-  constructor(private apiService: SpassService, private router: Router) { }
+  constructor(private apiService: SpassService, private router: Router, public oidcSecurityService: OidcSecurityService) { }
 
   ngOnInit() {
     this.loggedMail = localStorage.getItem('loggedMail');
@@ -25,6 +26,10 @@ export class ToolsManagementComponent implements OnInit {
     this.apiService.getTools().subscribe(response => {
       this.fileNames = response.replace('[', '').replace(']', '').split('"').join('').replace(/\s/g, '').split(',');
     });
+  }
+
+  logout() {
+    this.oidcSecurityService.logoff();
   }
 
   onFileChange(files: FileList) {

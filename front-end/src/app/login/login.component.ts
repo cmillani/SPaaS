@@ -18,7 +18,6 @@ export class LoginComponent implements OnInit {
   userData: any;
 
   constructor(private apiService: SpassService, private router: Router, public oidcSecurityService: OidcSecurityService) {
-    localStorage.clear();
     if (this.oidcSecurityService.moduleSetup) {
       this.doCallbackLogicIfRequired();
     } else {

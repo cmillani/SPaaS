@@ -58,15 +58,15 @@ services:
     ports:
       - "5000:5000"
 
-  frontend:
-    build:
-      context: ./front-end
-      dockerfile: Dockerfile-Dev
-    depends_on:
-      - backend
-      - authserver
-    ports:
-      - "4200:4200"
+  # frontend:
+  #   build:
+  #     context: ./front-end
+  #     dockerfile: Dockerfile-Dev
+  #   depends_on:
+  #     - backend
+  #     - authserver
+  #   ports:
+  #     - "4200:4200"
 
 volumes:
   minio:

@@ -16,34 +16,16 @@ import { SpassService } from './spass.service';
 import { DataManagementComponent } from './data-management/data-management.component';
 import { ToolsManagementComponent } from './tools-management/tools-management.component';
 import { TasksManagementComponent } from './tasks-management/tasks-management.component';
-import {
-    AuthModule,
-    AuthWellKnownEndpoints,
-    OidcConfigService,
-    OidcSecurityService,
-    OpenIDImplicitFlowConfiguration,
-} from 'angular-auth-oidc-client';
-
-const oidcConfig = {
-  "stsServer": "http://localhost:3000",
-  "redirect_url": "http://localhost:4200/login",
-	"client_id": "spaas",
-  "response_type": "code",
-	"scope": "openid email",
-	"post_logout_redirect_uri": "http://localhost:4200",
-	"start_checksession": true,
-	"post_login_route": "/toolsmanager",
-	"forbidden_route": "/forbidden",
-	"unauthorized_route": "/unauthorized",
-	"log_console_warning_active": true,
-	"log_console_debug_active": true,
-	"max_id_token_iat_offset_allowed_in_seconds": 10
-} 
+import { AuthModule, 
+         ConfigResult, 
+         OidcConfigService, 
+         OidcSecurityService, 
+         OpenIdConfiguration } from 'angular-auth-oidc-client';
  
 export function loadConfig(oidcConfigService: OidcConfigService) {
   return () => 
-    oidcConfigService.load_using_custom_stsServer(
-      'http://localhost:3000/.well-known/openid-configuration'
+    oidcConfigService.load_using_stsServer(
+      'http://localhost:3000'
     );
 }
 
@@ -81,11 +63,25 @@ export function loadConfig(oidcConfigService: OidcConfigService) {
 })
 export class AppModule { 
   constructor(private oidcSecurityService: OidcSecurityService, private oidcConfigService: OidcConfigService) {
-        this.oidcConfigService.onConfigurationLoaded.subscribe(() => {
-          const oidcFlowConfig = new OpenIDImplicitFlowConfiguration();
-          //merge configuration loaded from assets/auth.clientConfiguration.json
-          Object.assign(oidcFlowConfig, oidcConfig, this.oidcConfigService.clientConfiguration);
-          this.oidcSecurityService.setupModule(oidcFlowConfig, this.oidcConfigService.wellKnownEndpoints);
+        this.oidcConfigService.onConfigurationLoaded.subscribe((configResult: ConfigResult) => {
+          const config: OpenIdConfiguration = {
+            stsServer: configResult.customConfig.stsServer,
+            redirect_url: 'http://localhost:4200/login',
+            client_id: 'spaas',
+            post_logout_redirect_uri: 'http://localhost:4200',
+            start_checksession: true,
+            post_login_route: "/toolsmanager",
+            scope: 'openid profile email',
+            response_type: 'code',
+            // silent_renew: true,
+            // silent_renew_url: 'https://localhost:4200/silent-renew.html',
+            log_console_debug_active: true,
+            forbidden_route: "/forbidden",
+            unauthorized_route: "/unauthorized",
+            log_console_warning_active: true,
+            max_id_token_iat_offset_allowed_in_seconds: 10
+          }; 
+          this.oidcSecurityService.setupModule(config, configResult.authWellknownEndpoints);
         });
     }
 }
