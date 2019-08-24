@@ -11,12 +11,12 @@ import { StatusComponent } from './status/status.component';
 import { ResultsComponent } from './results/results.component';
 import { AppRoutingModule } from './app-routing.module';
 import { LoginComponent } from './login/login.component';
-import { AccountcreationComponent } from './accountcreation/accountcreation.component';
 import { SpassService } from './spass.service';
 import { DataManagementComponent } from './data-management/data-management.component';
 import { ToolsManagementComponent } from './tools-management/tools-management.component';
 import { TasksManagementComponent } from './tasks-management/tasks-management.component';
 import { NavigationBarComponent } from './navigationBar/navigationBar.component'
+import { SideMenuComponent } from './sidemenu/sidemenu.component'
 import { AuthModule, 
          ConfigResult, 
          OidcConfigService, 
@@ -32,13 +32,13 @@ export function loadConfig(oidcConfigService: OidcConfigService) {
 
 @NgModule({
   declarations: [
+    SideMenuComponent,
     NavigationBarComponent,
     AppComponent,
     DefinitionComponent,
     StatusComponent,
     ResultsComponent,
     LoginComponent,
-    AccountcreationComponent,
     DataManagementComponent,
     ToolsManagementComponent,
     TasksManagementComponent
