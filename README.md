@@ -15,3 +15,16 @@ The available options for the **blob mechanism** are:
 
 * minio
 * azure
+
+# Running
+Be sure to execute `npm install` on */front-end* and then execute the script */tools/startLocal.sh* to setup a local environment. In order to run locally, you must have the following servers running locally and configured on */tools/config.sh*:
+
+* redis
+* minio
+* mongodb
+
+and the following installed:
+
+* python3
+* npm
+* celery
