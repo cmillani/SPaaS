@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
+import { Http, Headers } from '@angular/http';
+import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { Observable } from 'rxjs/Observable';
 import { environment } from '../environments/environment';
 import 'rxjs/add/operator/map';
@@ -22,61 +23,59 @@ const STATUS_ENDPOINT = environment.statusEndpoint;
 export class SpassService {
   public currentMail: string;
 
-  constructor(private http: Http) {
+  constructor(private http: Http, public oidcSecurityService: OidcSecurityService) {
   }
 
-  createUser(user_data: object): Observable<object> {
-    return this.http
-    .post(API_URL + CREATE_USER_ENDPOINT, user_data)
-    .map(response => {
-      return response;
-    });
-  }
+  private createHeaders(): Headers {
+    var headers: Headers = new Headers();
+    headers.set('Content-Type', 'application/json');
+    headers.set('Accept', 'application/json');
 
-  authenticateUser(user_data: object): Observable<object> {
-    return this.http
-      .post(API_URL + AUTH_USER_ENDPOINT, user_data)
-      .map(response => {
-        if (response['status'] === 200) {
-          localStorage.setItem('loggedMail', user_data['email']);
-          localStorage.setItem('loggedPass', user_data['pass']);
-        }
-        return response;
-      });
+    const token = this.oidcSecurityService.getToken();
+    if (token !== '') {
+      const tokenValue = 'Bearer ' + token;
+      headers.set('Authorization', tokenValue);
+    }
+
+    return headers
   }
 
   uploadData(fileToUpload: File, nameOfFile: string): Observable<object> {
+    let headers: Headers = this.createHeaders()
     const formData: FormData = new FormData();
     formData.append(nameOfFile, fileToUpload, fileToUpload.name);
 
     return this.http
-    .post(API_URL + UPLOAD_DATA_ENDPOINT, formData)
+    .post(API_URL + UPLOAD_DATA_ENDPOINT, formData, { headers: headers })
     .map(response => {
       return response;
     });
   }
 
   getBlobFiles(): Observable<string> {
+    let headers: Headers = this.createHeaders()
     return this.http
-    .get(API_URL + GET_FILES_BLOB_ENDPOINT)
+    .get(API_URL + GET_FILES_BLOB_ENDPOINT, { headers: headers })
     .map(response => {
       return response['_body'];
     });
   }
 
   uploadTool(fileToUpload: File, nameOfFile: string, parameters: string): Observable<object> {
+    let headers: Headers = this.createHeaders()
     const formData: FormData = new FormData();
     formData.append(nameOfFile, fileToUpload);
     formData.append('parameters', parameters);
 
     return this.http
-    .post(API_URL + UPLOAD_TOOL_ENDPOINT, formData)
+    .post(API_URL + UPLOAD_TOOL_ENDPOINT, formData, { headers: headers })
     .map(response => {
       return response;
     });
   }
 
   getTools(): Observable<string> {
+    let headers: Headers = this.createHeaders()
     return this.http
     .get(API_URL + GET_TOOLS_BLOB_ENDPOINT)
     .map(response => {
@@ -85,31 +84,35 @@ export class SpassService {
   }
 
   deleteTool(name: string ) {
+    let headers: Headers = this.createHeaders()
     return this.http
-    .delete(API_URL + DELETE_TOOL_ENPOINT + name + '/')
+    .delete(API_URL + DELETE_TOOL_ENPOINT + name + '/', { headers: headers })
     .map(response => {
       return response;
     });
   }
 
   deleteData(name: string) {
+    let headers: Headers = this.createHeaders()
     return this.http
-    .delete(API_URL + DELETE_DATA_ENDPOINT + name + '/')
+    .delete(API_URL + DELETE_DATA_ENDPOINT + name + '/', { headers: headers })
     .map(response => {
       return response;
     });
   }
 
   loadParameters(toolName: string) {
+    let headers: Headers = this.createHeaders()
     return this.http
-    .get(API_URL + GET_PARAMETERS_ENDPOINT + toolName + '/')
+    .get(API_URL + GET_PARAMETERS_ENDPOINT + toolName + '/', { headers: headers })
     .map(response => {
       return response;
     });
   }
 
   submitTask(definition: object) {
-    return this.http.post(API_URL + SUBMIT_TASK_ENDPOINT, definition)
+    let headers: Headers = this.createHeaders()
+    return this.http.post(API_URL + SUBMIT_TASK_ENDPOINT, definition, { headers: headers })
     .map(response => {
       console.log(response);
       return response;
@@ -117,16 +120,18 @@ export class SpassService {
   }
 
   getResultsFiles(): Observable<string> {
+    let headers: Headers = this.createHeaders()
     return this.http
-    .get(API_URL + GET_RESULTS_BLOB_ENDPOINT)
+    .get(API_URL + GET_RESULTS_BLOB_ENDPOINT, { headers: headers })
     .map(response => {
       return response['_body'];
     });
   }
 
   getStatus(): Observable<string> {
+    let headers: Headers = this.createHeaders()
     return this.http
-    .get(API_URL + STATUS_ENDPOINT)
+    .get(API_URL + STATUS_ENDPOINT, { headers: headers })
     .map(response => {
       return response['_body'];
     });
