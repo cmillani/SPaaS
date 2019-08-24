@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { SpassService } from '../spass.service';
 import { Router } from '@angular/router';
+import { OidcSecurityService } from 'angular-auth-oidc-client';
 
 @Component({
   selector: 'app-tools-management',
@@ -8,7 +9,6 @@ import { Router } from '@angular/router';
   styleUrls: ['./tools-management.component.css']
 })
 export class ToolsManagementComponent implements OnInit {
-  loggedMail: string;
   fileToUpload: File;
   nameOfFile: string;
   fileNames: any;
@@ -17,10 +17,6 @@ export class ToolsManagementComponent implements OnInit {
   constructor(private apiService: SpassService, private router: Router) { }
 
   ngOnInit() {
-    this.loggedMail = localStorage.getItem('loggedMail');
-    if (!this.loggedMail) {
-      this.router.navigate(['/', 'login']);
-    }
     this.fileToUpload = null;
     this.apiService.getTools().subscribe(response => {
       this.fileNames = response.replace('[', '').replace(']', '').split('"').join('').replace(/\s/g, '').split(',');

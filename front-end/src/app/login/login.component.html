@@ -14,9 +14,6 @@
       <form class="form-inline my-2 my-lg-0">
         <a class="nav-link" style="color: aliceblue">Please Log in</a>
       </form>
-      <form class="form-inline my-2 my-lg-0">
-          <a class="nav-link" href="/accountcreation">Create an accont</a>
-      </form>
     </div>
 </nav>
 
@@ -29,12 +26,12 @@
     <form>
             <div class="custom-forms">
             <div class="form-group">
-                <label for="jobname">Email</label>
-                <input  class="form-control" id="jobname" placeholder="The email used to create the account" [(ngModel)]="email" name="email">
+                <!-- <label for="jobname">Email</label> -->
+                <!-- <input  class="form-control" id="jobname" placeholder="The email used to create the account" [(ngModel)]="email" name="email"> -->
             </div> 
             <div class="form-group">
-                <label for="codeinput">Password</label>
-                <input  class="form-control" id="codeinput" placeholder="Your password"  [(ngModel)]="pass" name="pass" type="password">
+                <!-- <label for="codeinput">Password</label> -->
+                <!-- <input  class="form-control" id="codeinput" placeholder="Your password"  [(ngModel)]="pass" name="pass" type="password"> -->
             </div>
             <button type="submit" class="btn btn-primary" (click)="onSubmit()">Login</button>
             <p>{{ alertMessage }}</p>
