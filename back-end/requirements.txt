@@ -4,3 +4,4 @@ flask-cors
 azure-storage
 celery
 redis
+minio
