@@ -1,6 +1,16 @@
 version: '3'
 
 services:
+  neo4j: 
+    image: neo4j
+    environment:
+      - NEO4J_AUTH=none
+    volumes:
+      - neo4j:/data
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+
   minio:
     image: minio/minio
     command: [server, /data]
@@ -40,7 +50,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - SPASS_CONNECTION_STRING=mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo:27017/?tls=false
+      - SPASS_CONNECTION_STRING=mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo:27017/?ssl=false
       - SPASS_CELERY_BROKER=redis://redis
 
   # backend:
@@ -74,3 +84,4 @@ services:
 
 volumes:
   minio:
+  neo4j:
