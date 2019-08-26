@@ -77,7 +77,7 @@ export class SpassService {
   getTools(): Observable<string> {
     let headers: Headers = this.createHeaders()
     return this.http
-    .get(API_URL + GET_TOOLS_BLOB_ENDPOINT)
+    .get(API_URL + GET_TOOLS_BLOB_ENDPOINT, { headers: headers })
     .map(response => {
       return response['_body'];
     });

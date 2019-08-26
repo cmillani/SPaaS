@@ -1,8 +1,12 @@
-from flask import Flask, request, Response
+import requests 
+import jwt
+from functools import wraps
+from flask import abort, g, Flask, request, Response
 import json
 import pymongo
 from flask_cors import CORS
 from bson.json_util import dumps, loads
+from bson.objectid import ObjectId
 import os
 from celery import Celery
 import subprocess
@@ -17,6 +21,41 @@ db_client = pymongo.MongoClient(os.environ['SPASS_CONNECTION_STRING']).spassData
 blobMechanism = BlobMechanismFactory.getMechanism()
 
 celery = Celery(app.name, broker=os.environ['SPASS_CELERY_BROKER'], backend=os.environ['SPASS_CELERY_BROKER'])
+
+authapi_endpoint = "http://localhost:3000"
+
+def validate_token(token):
+    data = {'token': token, 'client_id': "spaas"}
+    validated_token = requests.post(url = authapi_endpoint + "/token/introspection", data = data).json()
+    if validated_token["active"]:
+        return
+    else:
+        abort(401)
+
+def retrieve_user(user_id):
+    user = db_client.usersCollection.find_one({'_id': ObjectId(user_id)}, {'password': False})
+    if user:
+        return user
+    else:
+        abort(401)
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        auth_header = request.headers.get("Authorization")
+        if auth_header:
+            # Retrieves and then validates the user token
+            token = auth_header.split(" ")[1]
+            validate_token(token)
+            decoded_token = jwt.decode(token, verify=False)
+            user = retrieve_user(decoded_token["sub"])
+            # All validated and user retrieved, saves data to request information
+            g.token = token
+            g.user = user
+        else:
+            abort(401)
+        return f(*args, **kwargs)
+    return decorated_function
 
 @celery.task
 def submit_celery(tool_name, data_name, args):
@@ -55,73 +94,38 @@ def submit_celery(tool_name, data_name, args):
 def health():
     return Response(status=200)
 
-@app.route("/api/users/create/", methods=['POST'])
-def create_user():
-    user_data = request.get_json(force=True)
-    result = db_client.usersCollection.find({'email': user_data['email']})
-    
-    if result.count() != 0:
-        return Response({'message': 'This email is already in use'},status=409)
-
-    db_id = db_client.usersCollection.insert_one(user_data).inserted_id
-    if db_id:
-        return Response(status=200)
-    else:
-        return Response(status=409)
-    
-@app.route("/api/users/delete/", methods=['DELETE'])
-def delete_user():
-    user_email = request.get_json(force=True)['email']
-    result = db_client.usersCollection.delete_one({"email": user_email})
-    
-    if result.deleted_count:
-        return Response(status=200)
-    else:
-        return Response(status=404)
-
-@app.route("/api/users/", methods=['GET'])
-def list_users():
-    result = db_client.usersCollection.find({})
-    return Response(dumps(result), status=200)
-
-@app.route("/api/users/authenticate/", methods=['POST'])
-def authenticate():
-    data = request.get_json(force=True)
-    result = db_client.usersCollection.find_one({'email': data['email']})
-    if result:
-        if result['password'] == data['pass']:
-            return Response(status=200)
-        else:
-            return Response(status=401)
-    else:
-        return Response(status=401)
-
 @app.route("/api/tasks/parameters/<tool_name>/", methods=['GET'])
+@login_required
 def get_parameters(tool_name):
     result = db_client.toolsCollection.find_one({"name": tool_name})
     return Response(dumps(result["args"]), status=200)
 
 @app.route("/api/tasks/submit/", methods=['POST'])
+@login_required
 def submit_task():
     data = request.get_json(force=True)
     submit_celery.delay(data['tool'], data['data'], data['args'])
     return "SUCCESS"
 
 @app.route("/api/results/")
+@login_required
 def get_jobs_results():
     all_results = db_client.resultsCollection.find({})
     return Response(dumps(all_results),status=200)
 
 @app.route("/api/status/")
+@login_required
 def get_jobs_status():
     all_status = db_client.statusCollection.find({})
     return Response(dumps(all_status),status=200)
 
 @app.route("/api/results/<id>")
+@login_required
 def get_job_results(id):
     raise NotImplementedError()
 
 @app.route('/api/data/upload/', methods=['POST'])
+@login_required
 def upload_data():
     data = request.files.items()
     for d in data:
@@ -132,6 +136,7 @@ def upload_data():
     return "Uploaded"
 
 @app.route('/api/data/', methods=['GET'])
+@login_required
 def get_files_blob():
     return json.dumps(list_files('seismic-data'))
 
@@ -141,6 +146,7 @@ def upload_to_azure(data_name, container_name, data_content):
     os.system('rm -rf '+ data_name)
 
 @app.route('/api/tools/', methods=['GET'])
+@login_required
 def get_tools_blob():
     return json.dumps(list_files('seismic-tools'))
 
@@ -150,6 +156,7 @@ def list_files(container_name):
     return all_names
 
 @app.route('/api/tools/upload/', methods=['POST'])
+@login_required
 def upload_tool():
     data = request.files.items()
     arguments = request.form
@@ -181,11 +188,13 @@ def upload_tool():
     return 'Uploaded'
 
 @app.route('/api/tools/<name>/', methods=['DELETE'])
+@login_required
 def delete_tool(name):
     delete_blob(name, 'seismic-tools')
     return 'Deleted'
 
 @app.route('/api/data/<name>/', methods=['DELETE'])
+@login_required
 def delete_data(name):
     delete_blob(name, 'seismic-data')
     return 'Deleted'

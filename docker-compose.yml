@@ -21,10 +21,14 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
       - MONGO_INITDB_DATABASE=spassDatabase
+    ports:
+      - "27017:27017"
 
   redis:
     image: redis
     hostname: redis
+    ports:
+      - "6379:6379"
 
   authserver:
     build: 
@@ -39,34 +43,34 @@ services:
       - SPASS_CONNECTION_STRING=mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo:27017/?tls=false
       - SPASS_CELERY_BROKER=redis://redis
 
-  backend:
-    build:
-      context: ./back-end
-      dockerfile: Dockerfile
-    depends_on:
-      - redis
-      - mongo
-      - minio
-      - authserver
-    environment:
-      - SPASS_CELERY_BROKER=redis://redis
-      - SPASS_CONNECTION_STRING=mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo:27017/?tls=false
-      - BLOB_MECHANISM
-      - MINIO_ENDPOINT=minio:9000
-      - MINIO_SECRET_KEY
-      - MINIO_ACCESS_KEY
-    ports:
-      - "5000:5000"
-
-  # frontend:
+  # backend:
   #   build:
-  #     context: ./front-end
-  #     dockerfile: Dockerfile-Dev
+  #     context: ./back-end
+  #     dockerfile: Dockerfile
   #   depends_on:
-  #     - backend
+  #     - redis
+  #     - mongo
+  #     - minio
   #     - authserver
+  #   environment:
+  #     - SPASS_CELERY_BROKER=redis://redis
+  #     - SPASS_CONNECTION_STRING=mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo:27017/?ssl=false
+  #     - BLOB_MECHANISM
+  #     - MINIO_ENDPOINT=minio:9000
+  #     - MINIO_SECRET_KEY
+  #     - MINIO_ACCESS_KEY
   #   ports:
-  #     - "4200:4200"
+  #     - "5000:5000"
+
+  frontend:
+    build:
+      context: ./front-end
+      dockerfile: Dockerfile-Dev
+    depends_on:
+      # - backend
+      - authserver
+    ports:
+      - "4200:4200"
 
 volumes:
   minio:

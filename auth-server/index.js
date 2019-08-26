@@ -26,7 +26,7 @@ const configuration = {
     discovery: true,
     encryption: true,
     introspection: true,
-    registration: true,
+    registration: false,
     request: true,
     revocation: true,
     sessionManagement: true,
@@ -38,7 +38,7 @@ const clients = [{
   post_logout_redirect_uris: ['http://localhost:4200', 'http://localhost:4200/login'],
   response_types: ['code'],
   grant_types: ['authorization_code'],
-  token_endpoint_auth_method: 'none',
+  token_endpoint_auth_method: 'none'
   // + other client properties
 }];
  
