@@ -130,7 +130,7 @@ def get_job_results(id):
 
 # MARK: - Data
 
-@app.route('/api/data/upload/', methods=['POST'])
+@app.route('/api/data/', methods=['POST'])
 @login_required
 def upload_data():
     data = request.files.items()
@@ -144,6 +144,15 @@ def upload_data():
 
     return "Uploaded"
 
+@app.route('/api/data/<id>/', methods=['GET'])
+@login_required
+def get_data_id(id):
+    node = validate_access(g.user["email"], OPERATION_READ, id)
+    if node is not None:
+        return Response(blobMechanism.download_blob('seismic-data', node["blob"]))
+    else:
+        abort(401)
+
 @app.route('/api/data/', methods=['GET'])
 @login_required
 def get_files_blob():
@@ -151,7 +160,6 @@ def get_files_blob():
     for node in list_user_nodes(g.user["email"], "Data"):
         nodes.append({"id": node.id, "name": node["name"]})
     return json.dumps(nodes)
-
     
 @app.route('/api/data/<id>/', methods=['DELETE'])
 @login_required

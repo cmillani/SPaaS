@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { SpassService } from '../spass.service';
 import { Router } from '@angular/router';
+import { saveAs } from 'file-saver';
 
 @Component({
   selector: 'app-data-management',
@@ -33,6 +34,14 @@ export class DataManagementComponent implements OnInit {
     .subscribe(response => {
       console.log(response);
     });
+  }
+
+  downloadData(name: any) {
+    this.apiService.downloadData(name).subscribe( response => {
+      let blob:any = new Blob([response.blob()], { type: 'text/json; charset=utf-8' });
+			const url= window.URL.createObjectURL(blob);
+			saveAs(blob, name["name"]);
+    })
   }
 
   deleteData(name: any) {

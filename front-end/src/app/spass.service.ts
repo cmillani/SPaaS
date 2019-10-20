@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Http, Headers } from '@angular/http';
+import { Http, Headers, ResponseContentType } from '@angular/http';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { Observable } from 'rxjs/Observable';
 import { environment } from '../environments/environment';
@@ -10,6 +10,7 @@ const CREATE_USER_ENDPOINT = environment.createUserEndpoint;
 const AUTH_USER_ENDPOINT = environment.authUserEndpoint;
 const UPLOAD_DATA_ENDPOINT = environment.uploadDataEndpoint;
 const GET_FILES_BLOB_ENDPOINT = environment.getFilesEndpoint;
+const GET_FILE_BLOB_ENDPOINT = environment.getFileEndpoint;
 const UPLOAD_TOOL_ENDPOINT = environment.uploadToolsEndpoint;
 const GET_TOOLS_BLOB_ENDPOINT = environment.getToolsEndpoint;
 const DELETE_TOOL_ENPOINT = environment.deleteToolsEnpoint;
@@ -52,7 +53,7 @@ export class SpassService {
     });
   }
 
-  deleteData(name: string) {
+  deleteData(name: any) {
     let headers: Headers = this.createHeaders()
     return this.http
     .delete(API_URL + DELETE_DATA_ENDPOINT + name.id + '/', { headers: headers })
@@ -64,10 +65,16 @@ export class SpassService {
   getBlobFiles(): Observable<string> {
     let headers: Headers = this.createHeaders()
     return this.http
-    .get(API_URL + GET_FILES_BLOB_ENDPOINT, { headers: headers })
+    .get(API_URL + GET_FILES_BLOB_ENDPOINT, { headers: headers})
     .map(response => {
       return response.json();
     });
+  }
+
+  downloadData(name: any): Observable<HttpResponse<Blob>> {
+    let headers: Headers = this.createHeaders()
+    console.log(API_URL + GET_FILE_BLOB_ENDPOINT + name.id)
+    return this.http.get(API_URL + GET_FILE_BLOB_ENDPOINT + name.id + '/', { headers: headers, responseType: ResponseContentType.Blob  })
   }
 
   // MARK: - Tools

@@ -13,6 +13,9 @@ class AzureBlobMechanism:
         self.seismic_blob.create_container(ResultsBlob)
         self.seismic_blob.set_container_acl(ResultsBlob, public_access=PublicAccess.Container)
 
+    def download_blob(self, container_name, blob_name):
+        raise NotImplementedError()
+
     def get_blob_to_path(self, container_name, blob_name, file_path):
         return self.seismic_blob.get_blob_to_path(container_name, blob_name, file_path)
 

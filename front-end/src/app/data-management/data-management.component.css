@@ -1,0 +1,13 @@
+.actionColumn {
+    width:100px;
+}
+
+.btn {
+    border-color: transparent;
+    width: 100%;
+    margin: 5px;
+}
+
+.dangerButton {
+    background-color: red
+}
