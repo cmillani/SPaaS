@@ -23,7 +23,7 @@ export class DataManagementComponent implements OnInit {
     }
     this.fileToUpload = null;
     this.apiService.getBlobFiles().subscribe(response => {
-      this.fileNames = response.replace('[', '').replace(']', '').split('"').join('').replace(' ', '').split(',');
+      this.fileNames = response;
     });
   }
 
@@ -35,7 +35,7 @@ export class DataManagementComponent implements OnInit {
     });
   }
 
-  deleteData(name: string) {
+  deleteData(name: any) {
     this.apiService.deleteData(name)
     .subscribe(response => {
       console.log(response);

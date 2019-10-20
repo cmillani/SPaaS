@@ -12,8 +12,10 @@ from celery import Celery
 import subprocess
 import uuid
 from Mechanisms.Blob.BlobMechanismFactory import BlobMechanismFactory
+from neo4j import GraphDatabase
 
 app = Flask(__name__)
+graphDb = GraphDatabase.driver(os.environ['GRAPHDB_CONNECTION_STRING'])
 CORS(app)
 
 db_client = pymongo.MongoClient(os.environ['SPASS_CONNECTION_STRING']).spassDatabase
@@ -22,7 +24,7 @@ blobMechanism = BlobMechanismFactory.getMechanism()
 
 celery = Celery(app.name, broker=os.environ['SPASS_CELERY_BROKER'], backend=os.environ['SPASS_CELERY_BROKER'])
 
-authapi_endpoint = "http://localhost:3000"
+authapi_endpoint = os.environ['AUTHAPI_ENDPOINT']
 
 def validate_token(token):
     data = {'token': token, 'client_id': "spaas"}
@@ -94,6 +96,8 @@ def submit_celery(tool_name, data_name, args):
 def health():
     return Response(status=200)
 
+# MARK: - Tasks
+
 @app.route("/api/tasks/parameters/<tool_name>/", methods=['GET'])
 @login_required
 def get_parameters(tool_name):
@@ -124,26 +128,44 @@ def get_jobs_status():
 def get_job_results(id):
     raise NotImplementedError()
 
+# MARK: - Data
+
 @app.route('/api/data/upload/', methods=['POST'])
 @login_required
 def upload_data():
     data = request.files.items()
-    for d in data:
+    for d in data:        
         data_name = d[0]
+        data_blob_name = data_name + str(uuid.uuid4())
         data_content = d[1]
     
-    upload_to_azure(data_name,'seismic-data',data_content)
+    upload_to_azure(data_blob_name, 'seismic-data', data_content)
+    create_blob_node(g.user["email"], data_name, "Data", data_blob_name)
+
     return "Uploaded"
 
 @app.route('/api/data/', methods=['GET'])
 @login_required
 def get_files_blob():
-    return json.dumps(list_files('seismic-data'))
+    nodes = []
+    for node in list_user_nodes(g.user["email"], "Data"):
+        nodes.append({"id": node.id, "name": node["name"]})
+    return json.dumps(nodes)
 
-def upload_to_azure(data_name, container_name, data_content):
-    data_content.save(data_name)
-    blobMechanism.create_blob_from_path(container_name, data_name, data_name)
-    os.system('rm -rf '+ data_name)
+    
+@app.route('/api/data/<id>/', methods=['DELETE'])
+@login_required
+def delete_data(id):
+    node = validate_access(g.user["email"], OPERATION_WRITE, id)
+    if node is not None:
+        delete_blob(node["blob"], 'seismic-data')
+        delete_entity_and_paths(id)
+        return 'Deleted'
+    else:
+        abort(401)
+    
+
+# MARK: - Tools
 
 @app.route('/api/tools/', methods=['GET'])
 @login_required
@@ -193,14 +215,60 @@ def delete_tool(name):
     delete_blob(name, 'seismic-tools')
     return 'Deleted'
 
-@app.route('/api/data/<name>/', methods=['DELETE'])
-@login_required
-def delete_data(name):
-    delete_blob(name, 'seismic-data')
-    return 'Deleted'
+# MARK: - Blob methods
+
+def upload_to_azure(data_name, container_name, data_content):
+    data_content.save(data_name)
+    blobMechanism.create_blob_from_path(container_name, data_name, data_name)
+    os.system('rm -rf '+ data_name)
 
 def delete_blob(blob_name, container_name):
     blobMechanism.delete_blob(container_name, blob_name)
+
+# MARK: - Graph DB
+
+OPERATION_READ = 1
+OPERATION_WRITE = 10
+
+def create_blob_node(owner, name, data_type, blob_name):
+    def _create_node(tx):
+        tx.run("MERGE (p:Person {email: {uemail}}) "
+                "CREATE (d:" + data_type + " {name: {dataname}, blob: {blobname}}) "
+                "CREATE (p)-[:OWNS]->(d)", uemail=owner, dataname=name, blobname=blob_name)
+
+    with graphDb.session() as session:
+        session.write_transaction(_create_node)
+
+def list_user_nodes(user, data_type):
+    def _list_nodes(tx):
+        return tx.run("MATCH (user:Person {email: {uemail} })"
+                        "MATCH (user)-[:OWNS|MEMBER|PERMISSION*]->(entity:" + data_type + ")"
+                        "RETURN entity", uemail=user)
+    with graphDb.session() as session:
+        return session.read_transaction(_list_nodes).graph().nodes
+
+def validate_access(user, type, node_id):
+    def _validate_access(tx):
+        return tx.run("MATCH (user:Person {email: {uemail}}) "
+                        "MATCH (target) WHERE id(target) = {id} "
+                        "MATCH p = (user)-[:OWNS|MEMBER|PERMISSION*]->(target) "
+                        "WHERE all(rel in relationships(p) WHERE rel.level IS NULL OR rel.level >= {level}) "
+                        "RETURN target", uemail=user, id=int(node_id), level=type)
+    with graphDb.session() as session:
+        nodes = session.read_transaction(_validate_access).graph().nodes
+        target_node = None
+        for node in nodes:
+            target_node = node
+            break
+        return target_node
+
+def delete_entity_and_paths(entity_id):
+    def _delete_paths(tx):
+        tx.run("MATCH (entity) WHERE id(entity) = {id} "
+                "MATCH ()-[rel]-(entity) "
+                "DELETE rel, entity", id=int(entity_id))
+    with graphDb.session() as session:
+        session.write_transaction(_delete_paths)
 
 if __name__ == "__main__":
     app.run('0.0.0.0', 5000)

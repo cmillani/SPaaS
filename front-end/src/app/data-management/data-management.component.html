@@ -40,8 +40,8 @@
             </thead>
             <tbody>
               <tr *ngFor="let name of fileNames">
-                <td scope="row">{{ name }}</td>
-                <td>{{ "https://seismicdata.blob.core.windows.net/seismic-data/" +  name }} </td>
+                <td scope="row">{{ name.name }}</td>
+                <td>{{ "https://seismicdata.blob.core.windows.net/seismic-data/" +  name.name }} </td>
                 <td><button class="btn btn-primary" (click)="deleteData(name)">Delete Data</button></td>
               </tr>
             </tbody>

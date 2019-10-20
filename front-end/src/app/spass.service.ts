@@ -28,8 +28,6 @@ export class SpassService {
 
   private createHeaders(): Headers {
     var headers: Headers = new Headers();
-    headers.set('Content-Type', 'application/json');
-    headers.set('Accept', 'application/json');
 
     const token = this.oidcSecurityService.getToken();
     if (token !== '') {
@@ -39,6 +37,8 @@ export class SpassService {
 
     return headers
   }
+
+  // MARK: - Data
 
   uploadData(fileToUpload: File, nameOfFile: string): Observable<object> {
     let headers: Headers = this.createHeaders()
@@ -52,14 +52,25 @@ export class SpassService {
     });
   }
 
+  deleteData(name: string) {
+    let headers: Headers = this.createHeaders()
+    return this.http
+    .delete(API_URL + DELETE_DATA_ENDPOINT + name.id + '/', { headers: headers })
+    .map(response => {
+      return response;
+    });
+  }
+
   getBlobFiles(): Observable<string> {
     let headers: Headers = this.createHeaders()
     return this.http
     .get(API_URL + GET_FILES_BLOB_ENDPOINT, { headers: headers })
     .map(response => {
-      return response['_body'];
+      return response.json();
     });
   }
+
+  // MARK: - Tools
 
   uploadTool(fileToUpload: File, nameOfFile: string, parameters: string): Observable<object> {
     let headers: Headers = this.createHeaders()
@@ -92,14 +103,7 @@ export class SpassService {
     });
   }
 
-  deleteData(name: string) {
-    let headers: Headers = this.createHeaders()
-    return this.http
-    .delete(API_URL + DELETE_DATA_ENDPOINT + name + '/', { headers: headers })
-    .map(response => {
-      return response;
-    });
-  }
+  // MARK: - Task
 
   loadParameters(toolName: string) {
     let headers: Headers = this.createHeaders()
