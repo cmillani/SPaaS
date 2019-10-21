@@ -223,6 +223,22 @@ def delete_tool(name):
     delete_blob(name, 'seismic-tools')
     return 'Deleted'
 
+# MARK: - Sharing
+
+@app.route('/api/entity/accesslist/', methods=['POST'])
+@login_required
+def share_entity():
+    data = request.get_json(force=True)
+    node = validate_ownership(g.user["email"], data["entity"]["id"])
+    if node is not None:
+        existent_rel = validate_access(data["email"], data["permission"], data["entity"]["id"])
+        if existent_rel is None:
+            add_permission(data["entity"]["id"], data["email"], data["permission"])
+        return Response()
+    else:
+        abort(404)
+
+
 # MARK: - Blob methods
 
 def upload_to_azure(data_name, container_name, data_content):
@@ -277,6 +293,29 @@ def delete_entity_and_paths(entity_id):
                 "DELETE rel, entity", id=int(entity_id))
     with graphDb.session() as session:
         session.write_transaction(_delete_paths)
+
+def validate_ownership(email, entity_id):
+    def _validate_ownership(tx):
+        return tx.run("MATCH (user:Person {email: {uemail}}) "
+                        "MATCH (target) WHERE id(target) = {id} "
+                        "MATCH (user)-[:OWNS]->(target) "
+                        "RETURN target", uemail=email, id=int(entity_id))
+    with graphDb.session() as session:
+        nodes = session.read_transaction(_validate_ownership).graph().nodes
+        target_node = None
+        for node in nodes:
+            target_node = node
+            break
+        return target_node
+
+def add_permission(entity_id, user_email, permission):
+    def _add_permission(tx):
+        tx.run("MATCH (user:Person {email: {uemail}}) "
+                "MATCH (entity) WHERE id(entity) = {id} "
+                "CREATE (user)-[:PERMISSION {level: {permission}}]->(entity) ", 
+                uemail=user_email, id=int(entity_id), permission=permission)
+    with graphDb.session() as session:
+        session.write_transaction(_add_permission)
 
 if __name__ == "__main__":
     app.run('0.0.0.0', 5000)

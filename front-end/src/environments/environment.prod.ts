@@ -13,5 +13,6 @@ export const environment = {
   getParametersEndpoint: '/api/tasks/parameters/',
   submitTaskEndpoint: '/api/tasks/submit/',
   getResultsBlobEndpoints: '/api/results/',
-  statusEndpoint: '/api/status/'
+  statusEndpoint: '/api/status/',
+  shareEndpoint: '/api/entity/accesslist/'
 };

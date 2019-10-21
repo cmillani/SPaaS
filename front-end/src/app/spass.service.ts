@@ -19,6 +19,7 @@ const GET_PARAMETERS_ENDPOINT = environment.getParametersEndpoint;
 const SUBMIT_TASK_ENDPOINT = environment.submitTaskEndpoint;
 const GET_RESULTS_BLOB_ENDPOINT = environment.getResultsBlobEndpoints;
 const STATUS_ENDPOINT = environment.statusEndpoint;
+const SHARE_ENDPOINT = environment.shareEndpoint;
 
 @Injectable()
 export class SpassService {
@@ -71,10 +72,15 @@ export class SpassService {
     });
   }
 
-  downloadData(name: any): Observable<HttpResponse<Blob>> {
+  downloadData(name: any): Observable<string> {
     let headers: Headers = this.createHeaders()
-    console.log(API_URL + GET_FILE_BLOB_ENDPOINT + name.id)
-    return this.http.get(API_URL + GET_FILE_BLOB_ENDPOINT + name.id + '/', { headers: headers, responseType: ResponseContentType.Blob  })
+    return this.http
+    .get(API_URL + GET_FILE_BLOB_ENDPOINT + name.id + '/', { headers: headers, responseType: ResponseContentType.Blob  })
+    .map( response => {
+      let blob:any = new Blob([response.blob()], { type: 'text/json; charset=utf-8' });
+			saveAs(blob, name["name"]);
+      return "ok"
+    })
   }
 
   // MARK: - Tools
@@ -143,6 +149,17 @@ export class SpassService {
     let headers: Headers = this.createHeaders()
     return this.http
     .get(API_URL + STATUS_ENDPOINT, { headers: headers })
+    .map(response => {
+      return response['_body'];
+    });
+  }
+
+  // MARK: - Sharing
+
+  share(sharingData: object, email: string, permission: string): Observable<Response> {
+    let headers: Headers = this.createHeaders()
+    return this.http
+    .post(API_URL + SHARE_ENDPOINT, {email: email, entity: sharingData, permission: permission}, { headers: headers })
     .map(response => {
       return response['_body'];
     });

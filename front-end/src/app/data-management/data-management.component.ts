@@ -38,9 +38,7 @@ export class DataManagementComponent implements OnInit {
 
   downloadData(name: any) {
     this.apiService.downloadData(name).subscribe( response => {
-      let blob:any = new Blob([response.blob()], { type: 'text/json; charset=utf-8' });
-			const url= window.URL.createObjectURL(blob);
-			saveAs(blob, name["name"]);
+      console.log(response)
     })
   }
 

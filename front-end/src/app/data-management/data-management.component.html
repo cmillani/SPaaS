@@ -41,8 +41,11 @@
             <tbody>
               <tr *ngFor="let name of fileNames">
                 <td scope="row">{{ name.name }}</td>
-                <td><button class="btn btn-primary dangerButton" (click)="deleteData(name)">Delete</button>
-                    <button class="btn btn-primary" (click)="downloadData(name)">Download</button>
+                <td>
+                  <button class="btn btn-primary dangerButton" (click)="deleteData(name)">Delete</button>
+                  <button class="btn btn-primary" (click)="downloadData(name)">Download</button>
+                  <app-sharemodal [sharingData]="name">
+                  </app-sharemodal>
                 </td>
               </tr>
             </tbody>

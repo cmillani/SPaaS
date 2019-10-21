@@ -4,6 +4,9 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { HttpClientModule } from '@angular/common/http';
 
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatRadioModule } from '@angular/material';
+
 
 import { AppComponent } from './app.component';
 import { DefinitionComponent } from './definition/definition.component';
@@ -17,6 +20,8 @@ import { ToolsManagementComponent } from './tools-management/tools-management.co
 import { TasksManagementComponent } from './tasks-management/tasks-management.component';
 import { NavigationBarComponent } from './navigationBar/navigationBar.component'
 import { SideMenuComponent } from './sidemenu/sidemenu.component'
+import { ShareModal } from './share-modal/share-modal.component'
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AuthModule, 
          ConfigResult, 
          OidcConfigService, 
@@ -33,6 +38,7 @@ export function loadConfig(oidcConfigService: OidcConfigService) {
 @NgModule({
   declarations: [
     SideMenuComponent,
+    ShareModal,
     NavigationBarComponent,
     AppComponent,
     DefinitionComponent,
@@ -44,6 +50,9 @@ export function loadConfig(oidcConfigService: OidcConfigService) {
     TasksManagementComponent
   ],
   imports: [
+    MatRadioModule,
+    BrowserAnimationsModule,
+    NgbModule,
     BrowserModule,
     HttpClientModule,
     AppRoutingModule,

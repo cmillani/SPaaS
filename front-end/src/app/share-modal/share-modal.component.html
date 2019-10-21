@@ -1,0 +1,22 @@
+<ng-template #content let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Hi there!</h4>
+        <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+        <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <form></form>
+    <div class="modal-body">
+        <p>Share {{sharingData.name}} with:</p>
+        <input class="form-control" name="email" [(ngModel)]="email" id="email" placeholder="george@corp.com">
+        <mat-radio-group aria-label="Access level:" [(ngModel)]="permission"><br>
+            <mat-radio-button value="1" checked>Read</mat-radio-button><br>
+            <mat-radio-button value="10">Write</mat-radio-button>
+        </mat-radio-group>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark" (click)="share()">Share</button>
+    </div>
+</ng-template>
+
+<button class="btn btn-primary" (click)="open(content)">Share</button>

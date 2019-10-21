@@ -1,5 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 @import '~bootstrap/dist/css/bootstrap.min.css';
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
 
 .pagetitle {
     padding-top: 20px;
@@ -14,7 +15,7 @@
 }
 
 .files-table {
-    width: 80%;
+    width: 90%;
     padding-left: 100px;
 }
 
