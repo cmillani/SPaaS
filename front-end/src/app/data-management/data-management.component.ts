@@ -23,6 +23,10 @@ export class DataManagementComponent implements OnInit {
       this.router.navigate(['/', 'login']);
     }
     this.fileToUpload = null;
+    this.loadFiles();
+  }
+
+  loadFiles() {
     this.apiService.getBlobFiles().subscribe(response => {
       this.fileNames = response;
     });
@@ -32,6 +36,7 @@ export class DataManagementComponent implements OnInit {
     this.fileToUpload = files.item(0);
     this.apiService.uploadData(this.fileToUpload, this.nameOfFile)
     .subscribe(response => {
+      this.loadFiles();
       console.log(response);
     });
   }
@@ -45,6 +50,7 @@ export class DataManagementComponent implements OnInit {
   deleteData(name: any) {
     this.apiService.deleteData(name)
     .subscribe(response => {
+      this.loadFiles();
       console.log(response);
     });
   }
