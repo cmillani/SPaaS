@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers, ResponseContentType } from '@angular/http';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
-import { Observable } from 'rxjs/Observable';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { environment } from '../environments/environment';
 import 'rxjs/add/operator/map';
+import Swal from 'sweetalert2'
 
 const API_URL = environment.apiUrl;
 const CREATE_USER_ENDPOINT = environment.createUserEndpoint;
@@ -51,7 +53,7 @@ export class SpassService {
     .post(API_URL + UPLOAD_DATA_ENDPOINT, formData, { headers: headers })
     .map(response => {
       return response;
-    });
+    }).pipe(catchError(this.handleError));
   }
 
   deleteData(name: any) {
@@ -60,7 +62,7 @@ export class SpassService {
     .delete(API_URL + DELETE_DATA_ENDPOINT + name.id + '/', { headers: headers })
     .map(response => {
       return response;
-    });
+    }).pipe(catchError(this.handleError));
   }
 
   getBlobFiles(): Observable<string> {
@@ -69,7 +71,7 @@ export class SpassService {
     .get(API_URL + GET_FILES_BLOB_ENDPOINT, { headers: headers})
     .map(response => {
       return response.json();
-    });
+    }).pipe(catchError(this.handleError));
   }
 
   downloadData(name: any): Observable<string> {
@@ -80,7 +82,7 @@ export class SpassService {
       let blob:any = new Blob([response.blob()], { type: 'text/json; charset=utf-8' });
 			saveAs(blob, name["name"]);
       return "ok"
-    })
+    }).pipe(catchError(this.handleError));
   }
 
   // MARK: - Tools
@@ -95,7 +97,7 @@ export class SpassService {
     .post(API_URL + UPLOAD_TOOL_ENDPOINT, formData, { headers: headers })
     .map(response => {
       return response;
-    });
+    }).pipe(catchError(this.handleError));
   }
 
   getTools(): Observable<string> {
@@ -104,7 +106,7 @@ export class SpassService {
     .get(API_URL + GET_TOOLS_BLOB_ENDPOINT, { headers: headers })
     .map(response => {
       return response['_body'];
-    });
+    }).pipe(catchError(this.handleError));
   }
 
   deleteTool(name: string ) {
@@ -113,7 +115,7 @@ export class SpassService {
     .delete(API_URL + DELETE_TOOL_ENPOINT + name + '/', { headers: headers })
     .map(response => {
       return response;
-    });
+    }).pipe(catchError(this.handleError));
   }
 
   // MARK: - Task
@@ -124,16 +126,15 @@ export class SpassService {
     .get(API_URL + GET_PARAMETERS_ENDPOINT + toolName + '/', { headers: headers })
     .map(response => {
       return response;
-    });
+    }).pipe(catchError(this.handleError));
   }
 
   submitTask(definition: object) {
     let headers: Headers = this.createHeaders()
     return this.http.post(API_URL + SUBMIT_TASK_ENDPOINT, definition, { headers: headers })
     .map(response => {
-      console.log(response);
       return response;
-    });
+    }).pipe(catchError(this.handleError));
   }
 
   getResultsFiles(): Observable<string> {
@@ -142,7 +143,7 @@ export class SpassService {
     .get(API_URL + GET_RESULTS_BLOB_ENDPOINT, { headers: headers })
     .map(response => {
       return response['_body'];
-    });
+    }).pipe(catchError(this.handleError));
   }
 
   getStatus(): Observable<string> {
@@ -151,7 +152,20 @@ export class SpassService {
     .get(API_URL + STATUS_ENDPOINT, { headers: headers })
     .map(response => {
       return response['_body'];
-    });
+    }).pipe(catchError(this.handleError));
+  }
+
+  // MARK: - Error Handling
+
+  handleError(response: any) {
+    switch (response.status) {
+        case 401:
+          Swal.fire("Invalid Permissions", "You do not have enought permissions", "error");
+        default:
+          Swal.fire("Server error", "Something went wrong", "error");
+    }
+    console.log(response.status)
+    return throwError(response);
   }
 
   // MARK: - Sharing
@@ -162,7 +176,7 @@ export class SpassService {
     .post(API_URL + SHARE_ENDPOINT, {email: email, entity: sharingData, permission: permission}, { headers: headers })
     .map(response => {
       return response['_body'];
-    });
+    }).pipe(catchError(this.handleError));
   }
 
 }

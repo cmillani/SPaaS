@@ -7,7 +7,6 @@ import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatRadioModule } from '@angular/material';
 
-
 import { AppComponent } from './app.component';
 import { DefinitionComponent } from './definition/definition.component';
 import { StatusComponent } from './status/status.component';
