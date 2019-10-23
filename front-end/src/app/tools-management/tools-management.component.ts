@@ -18,8 +18,12 @@ export class ToolsManagementComponent implements OnInit {
 
   ngOnInit() {
     this.fileToUpload = null;
+    this.getTools();
+  }
+
+  getTools() {
     this.apiService.getTools().subscribe(response => {
-      this.fileNames = response.replace('[', '').replace(']', '').split('"').join('').replace(/\s/g, '').split(',');
+      this.fileNames = response;
     });
   }
 
@@ -27,6 +31,7 @@ export class ToolsManagementComponent implements OnInit {
     this.fileToUpload = files.item(0);
     this.apiService.uploadTool(this.fileToUpload, this.nameOfFile, this.jobParams)
     .subscribe(response => {
+      this.getTools();
       console.log(response);
     });
   }
@@ -34,6 +39,7 @@ export class ToolsManagementComponent implements OnInit {
   deleteTool(name: string) {
     this.apiService.deleteTool(name)
     .subscribe(response => {
+      this.getTools();
       console.log(response);
     });
   }

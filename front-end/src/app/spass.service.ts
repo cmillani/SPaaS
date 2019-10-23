@@ -105,7 +105,7 @@ export class SpassService {
     return this.http
     .get(API_URL + GET_TOOLS_BLOB_ENDPOINT, { headers: headers })
     .map(response => {
-      return response['_body'];
+      return response.json();
     }).pipe(catchError(this.handleError));
   }
 

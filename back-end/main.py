@@ -178,7 +178,10 @@ def delete_data(id):
 @app.route('/api/tools/', methods=['GET'])
 @login_required
 def get_tools_blob():
-    return json.dumps(list_files('seismic-tools'))
+    nodes = []
+    for node in list_user_nodes(g.user["email"], "Tool"):
+        nodes.append({"id": node.id, "name": node["name"], "args": node["parameters"]})
+    return json.dumps(nodes)
 
 def list_files(container_name):
     data = blobMechanism.list_blobs(container_name)
@@ -191,12 +194,16 @@ def upload_tool():
     data = request.files.items()
     arguments = request.form
     
+    # Retrieve blob data
+
     for d in data:
         data_name = d[0]
+        data_blob_name = data_name + str(uuid.uuid4())
         data_content = d[1]
     
-    upload_to_azure(data_name, 'seismic-tools', data_content)
+    # Retrieve DB Data
     
+    all_arguments = ""
     for a in arguments.items():
         all_arguments = a[1]
 
@@ -204,6 +211,7 @@ def upload_tool():
     
     tool_document = {}
     tool_document['name'] = data_name
+    tool_document['blob_name'] = data_blob_name
     tool_document['args'] = []
     
     for p in splited:
@@ -213,9 +221,11 @@ def upload_tool():
         new_arg['description'] = description
         tool_document['args'].append(new_arg)
     
-    db_client.toolsCollection.insert_one(tool_document)
-    
-    return 'Uploaded'
+    upload_to_azure(data_blob_name, 'seismic-tools', data_content)
+    result = db_client.toolsCollection.insert_one(tool_document)
+    create_tool_node(g.user["email"], data_name, "Tool", data_blob_name, str(result.inserted_id))
+
+    return "Uploaded"
 
 @app.route('/api/tools/<name>/', methods=['DELETE'])
 @login_required
@@ -259,6 +269,15 @@ def create_blob_node(owner, name, data_type, blob_name):
         tx.run("MERGE (p:Person {email: {uemail}}) "
                 "CREATE (d:" + data_type + " {name: {dataname}, blob: {blobname}}) "
                 "CREATE (p)-[:OWNS]->(d)", uemail=owner, dataname=name, blobname=blob_name)
+
+    with graphDb.session() as session:
+        session.write_transaction(_create_node)
+
+def create_tool_node(owner, name, data_type, blob_name, mongoid):
+    def _create_node(tx):
+        tx.run("MERGE (p:Person {email: {uemail}}) "
+                "CREATE (d:" + data_type + " {name: {dataname}, blob: {blobname}, mongoid: {id}}) "
+                "CREATE (p)-[:OWNS]->(d)", uemail=owner, dataname=name, blobname=blob_name, id=mongoid)
 
     with graphDb.session() as session:
         session.write_transaction(_create_node)
