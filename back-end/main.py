@@ -188,7 +188,7 @@ def list_files(container_name):
     all_names = [d.name for d in data]
     return all_names
 
-@app.route('/api/tools/upload/', methods=['POST'])
+@app.route('/api/tools/', methods=['POST'])
 @login_required
 def upload_tool():
     data = request.files.items()
@@ -227,11 +227,17 @@ def upload_tool():
 
     return "Uploaded"
 
-@app.route('/api/tools/<name>/', methods=['DELETE'])
+@app.route('/api/tools/<id>/', methods=['DELETE'])
 @login_required
-def delete_tool(name):
-    delete_blob(name, 'seismic-tools')
-    return 'Deleted'
+def delete_tool(id):
+    node = validate_access(g.user["email"], OPERATION_WRITE, id)
+    if node is not None:
+        delete_blob(node["blob"], 'seismic-tools')
+        db_client.toolsCollection.delete_one({'_id': ObjectId(node["mongoid"])})
+        delete_entity_and_paths(id)
+        return 'Deleted'
+    else:
+        abort(401)
 
 # MARK: - Sharing
 

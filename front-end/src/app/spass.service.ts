@@ -109,10 +109,10 @@ export class SpassService {
     }).pipe(catchError(this.handleError));
   }
 
-  deleteTool(name: string ) {
+  deleteTool(name: any ) {
     let headers: Headers = this.createHeaders()
     return this.http
-    .delete(API_URL + DELETE_TOOL_ENPOINT + name + '/', { headers: headers })
+    .delete(API_URL + DELETE_TOOL_ENPOINT + name.id + '/', { headers: headers })
     .map(response => {
       return response;
     }).pipe(catchError(this.handleError));

@@ -36,7 +36,7 @@ export class ToolsManagementComponent implements OnInit {
     });
   }
 
-  deleteTool(name: string) {
+  deleteTool(name: any) {
     this.apiService.deleteTool(name)
     .subscribe(response => {
       this.getTools();
