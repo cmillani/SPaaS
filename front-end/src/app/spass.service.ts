@@ -87,6 +87,15 @@ export class SpassService {
 
   // MARK: - Tools
 
+  loadParameters(toolid: number) {
+    let headers: Headers = this.createHeaders()
+    return this.http
+    .get(API_URL + GET_PARAMETERS_ENDPOINT + toolid + '/parameters/', { headers: headers })
+    .map(response => {
+      return response.json();
+    }).pipe(catchError(this.handleError));
+  }
+
   uploadTool(fileToUpload: File, nameOfFile: string, parameters: string): Observable<object> {
     let headers: Headers = this.createHeaders()
     const formData: FormData = new FormData();
@@ -119,15 +128,6 @@ export class SpassService {
   }
 
   // MARK: - Task
-
-  loadParameters(toolName: string) {
-    let headers: Headers = this.createHeaders()
-    return this.http
-    .get(API_URL + GET_PARAMETERS_ENDPOINT + toolName + '/', { headers: headers })
-    .map(response => {
-      return response;
-    }).pipe(catchError(this.handleError));
-  }
 
   submitTask(definition: object) {
     let headers: Headers = this.createHeaders()

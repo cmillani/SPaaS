@@ -98,12 +98,6 @@ def health():
 
 # MARK: - Tasks
 
-@app.route("/api/tasks/parameters/<tool_name>/", methods=['GET'])
-@login_required
-def get_parameters(tool_name):
-    result = db_client.toolsCollection.find_one({"name": tool_name})
-    return Response(dumps(result["args"]), status=200)
-
 @app.route("/api/tasks/submit/", methods=['POST'])
 @login_required
 def submit_task():
@@ -175,6 +169,16 @@ def delete_data(id):
 
 # MARK: - Tools
 
+@app.route("/api/tools/<id>/parameters/", methods=['GET'])
+@login_required
+def get_parameters(id):
+    node = validate_access(g.user["email"], OPERATION_READ, id)
+    if node is not None:
+        result = db_client.toolsCollection.find_one({'_id': ObjectId(node['mongoid'])})
+        return Response(dumps(result["args"]), status=200)
+    else:
+        abort(401)
+
 @app.route('/api/tools/', methods=['GET'])
 @login_required
 def get_tools_blob():
@@ -182,11 +186,6 @@ def get_tools_blob():
     for node in list_user_nodes(g.user["email"], "Tool"):
         nodes.append({"id": node.id, "name": node["name"], "args": node["parameters"]})
     return json.dumps(nodes)
-
-def list_files(container_name):
-    data = blobMechanism.list_blobs(container_name)
-    all_names = [d.name for d in data]
-    return all_names
 
 @app.route('/api/tools/', methods=['POST'])
 @login_required
@@ -264,6 +263,11 @@ def upload_to_azure(data_name, container_name, data_content):
 
 def delete_blob(blob_name, container_name):
     blobMechanism.delete_blob(container_name, blob_name)
+
+def list_files(container_name):
+    data = blobMechanism.list_blobs(container_name)
+    all_names = [d.name for d in data]
+    return all_names
 
 # MARK: - Graph DB
 

@@ -16,8 +16,8 @@ export const environment = {
   uploadToolsEndpoint: '/api/tools/',
   getToolsEndpoint: '/api/tools/',
   deleteToolsEnpoint: '/api/tools/',
-
-  getParametersEndpoint: '/api/tasks/parameters/',
+  getParametersEndpoint: '/api/tools/',
+  
   submitTaskEndpoint: '/api/tasks/submit/',
   getResultsBlobEndpoints: '/api/results/',
   statusEndpoint: '/api/status/',
