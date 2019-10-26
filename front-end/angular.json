@@ -76,7 +76,8 @@
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",
               "node_modules/bootstrap/dist/js/bootstrap.js",
-              "node_modules/popper.js/dist/umd/popper.min.js"
+              "node_modules/popper.js/dist/umd/popper.min.js",
+              "node_modules/sweetalert2/dist/sweetalert2.min.css"
             ],
             "styles": [
               "src/styles.css"

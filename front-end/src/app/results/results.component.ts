@@ -17,7 +17,7 @@ export class ResultsComponent implements OnInit {
   ngOnInit() {
     this.loggedMail = localStorage.getItem('loggedMail');
     this.apiservice.getResultsFiles().subscribe(response => {
-      this.results = JSON.parse(response);
+      this.results = response;
     });
   }
 

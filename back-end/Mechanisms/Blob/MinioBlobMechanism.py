@@ -22,6 +22,9 @@ class MinioBlobMechanism:
         if not self.minioClient.bucket_exists(ResultsBlob):
             self.minioClient.make_bucket(ResultsBlob)
 
+    def download_blob(self, container_name, blob_name):
+        return self.minioClient.get_object(container_name, blob_name)
+
     def get_blob_to_path(self, container_name, blob_name, file_path):
         self.minioClient.fget_object(container_name, blob_name, file_path)
 

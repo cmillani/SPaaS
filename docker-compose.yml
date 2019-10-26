@@ -1,6 +1,17 @@
 version: '3'
 
 services:
+  neo4j: 
+    image: neo4j
+    hostname: neo4j
+    environment:
+      - NEO4J_AUTH=none
+    volumes:
+      - neo4j:/data
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+
   minio:
     image: minio/minio
     command: [server, /data]
@@ -21,10 +32,14 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
       - MONGO_INITDB_DATABASE=spassDatabase
+    ports:
+      - "27017:27017"
 
   redis:
     image: redis
     hostname: redis
+    ports:
+      - "6379:6379"
 
   authserver:
     build: 
@@ -36,37 +51,40 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - SPASS_CONNECTION_STRING=mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo:27017/?tls=false
+      - SPASS_CONNECTION_STRING=mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo:27017/?ssl=false
       - SPASS_CELERY_BROKER=redis://redis
 
-  backend:
-    build:
-      context: ./back-end
-      dockerfile: Dockerfile
-    depends_on:
-      - redis
-      - mongo
-      - minio
-      - authserver
-    environment:
-      - SPASS_CELERY_BROKER=redis://redis
-      - SPASS_CONNECTION_STRING=mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo:27017/?tls=false
-      - BLOB_MECHANISM
-      - MINIO_ENDPOINT=minio:9000
-      - MINIO_SECRET_KEY
-      - MINIO_ACCESS_KEY
-    ports:
-      - "5000:5000"
+  # backend:
+  #   build:
+  #     context: ./back-end
+  #     dockerfile: Dockerfile
+  #   depends_on:
+  #     - redis
+  #     - mongo
+  #     - minio
+  #     - authserver
+  #   environment:
+  #     - GRAPHDB_CONNECTION_STRING=bolt://neo4j:7687
+  #     - SPASS_CELERY_BROKER=redis://redis
+  #     - SPASS_CONNECTION_STRING=mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo:27017/?ssl=false
+  #     - BLOB_MECHANISM
+  #     - AUTHAPI_ENDPOINT=http://localhost:3000
+  #     - MINIO_ENDPOINT=minio:9000
+  #     - MINIO_SECRET_KEY
+  #     - MINIO_ACCESS_KEY
+  #   ports:
+  #     - "5000:5000"
 
   # frontend:
   #   build:
   #     context: ./front-end
   #     dockerfile: Dockerfile-Dev
   #   depends_on:
-  #     - backend
+  #     # - backend
   #     - authserver
   #   ports:
   #     - "4200:4200"
 
 volumes:
   minio:
+  neo4j:

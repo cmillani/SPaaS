@@ -11,14 +11,12 @@
                 <thead>
                   <tr>
                     <th scope="col">Id</th>
-                    <th scope="col">Link to Results</th>
-                    <th scope="col">Job Details</th>
+                    <th scope="col">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr *ngFor="let result of results">
-                    <td>{{ result.id }}</td>
-                    <td>{{ "https://seismicdata.blob.core.windows.net/seismic-results/" + result.id + ".tar.gz"}}</td>
+                    <td>{{ result.name }}</td>
                     <td> <button type="button" class="btn btn-primary"  data-toggle="modal" data-target="#exampleModal" (click)="selectResult(result.id)">Details</button></td>
                   </tr>
                 </tbody>

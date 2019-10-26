@@ -1,15 +1,21 @@
 export const environment = {
   production: true,
+
   apiUrl: 'http://localhost:5000',
-  createUserEndpoint: '/api/users/create/',
-  authUserEndpoint: '/api/users/authenticate/',
-  uploadDataEndpoint: '/api/data/upload/',
+
+  uploadDataEndpoint: '/api/data/',
   getFilesEndpoint: '/api/data/',
-  uploadToolsEndpoint: '/api/tools/upload/',
+  getFileEndpoint: '/api/data/',
+  deleteDataEndpoint: '/api/data/',
+
+  uploadToolsEndpoint: '/api/tools/',
   getToolsEndpoint: '/api/tools/',
   deleteToolsEnpoint: '/api/tools/',
-  deleteDataEndpoint: '/api/data/',
-  getParametersEndpoint: '/api/tasks/parameters/',
+  getParametersEndpoint: '/api/tools/',
+  
   submitTaskEndpoint: '/api/tasks/submit/',
-  getResultsBlobEndpoints: '/api/results/'
+  getResultsBlobEndpoints: '/api/results/',
+  statusEndpoint: '/api/status/',
+
+  shareEndpoint: '/api/entity/accesslist/'
 };

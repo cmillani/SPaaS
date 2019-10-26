@@ -17,7 +17,7 @@ export class StatusComponent implements OnInit {
   ngOnInit() {
     this.loggedMail = localStorage.getItem('loggedMail');
     this.apiservice.getStatus().subscribe(response => {
-      this.allStatus = JSON.parse(response);
+      this.allStatus = response;
       console.log(this.allStatus);
     });
   }
