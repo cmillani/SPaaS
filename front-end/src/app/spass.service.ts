@@ -6,19 +6,27 @@ import { catchError } from 'rxjs/operators';
 import { environment } from '../environments/environment';
 import 'rxjs/add/operator/map';
 import Swal from 'sweetalert2'
+import { saveAs } from 'file-saver';
 
 const API_URL = environment.apiUrl;
 const UPLOAD_DATA_ENDPOINT = environment.uploadDataEndpoint;
 const GET_FILES_BLOB_ENDPOINT = environment.getFilesEndpoint;
 const GET_FILE_BLOB_ENDPOINT = environment.getFileEndpoint;
+
 const UPLOAD_TOOL_ENDPOINT = environment.uploadToolsEndpoint;
 const GET_TOOLS_BLOB_ENDPOINT = environment.getToolsEndpoint;
 const DELETE_TOOL_ENPOINT = environment.deleteToolsEnpoint;
+const GET_TOOL_ENPOINT = environment.getToolEnpoint;
 const DELETE_DATA_ENDPOINT = environment.deleteDataEndpoint;
 const GET_PARAMETERS_ENDPOINT = environment.getParametersEndpoint;
+
 const SUBMIT_TASK_ENDPOINT = environment.submitTaskEndpoint;
 const GET_RESULTS_BLOB_ENDPOINT = environment.getResultsBlobEndpoints;
+const GET_RESULT_ENPOINT = environment.getResultBlobEndpoints;
 const STATUS_ENDPOINT = environment.statusEndpoint;
+const DOWNLOAD_DATA_ENDPOINT = environment.getResultEndpoints;
+const DELETE_RESULT_ENPOINT = environment.deleteResultEndpoints;
+
 const SHARE_ENDPOINT = environment.shareEndpoint;
 
 @Injectable()
@@ -75,9 +83,9 @@ export class SpassService {
   downloadData(name: any): Observable<any> {
     let headers: Headers = this.createHeaders()
     return this.http
-    .get(API_URL + GET_FILE_BLOB_ENDPOINT + name.id + '/', { headers: headers, responseType: ResponseContentType.Blob  })
-    .map( response => {
-      let blob:any = new Blob([response.blob()], { type: 'text/json; charset=utf-8' });
+    .get(API_URL + GET_FILE_BLOB_ENDPOINT + name.id + '/', { headers: headers, responseType: ResponseContentType.Blob })
+    .map(response => {
+      let blob:any = new Blob([response.blob()], { type: 'application/octet-stream; charset=utf-8' });
 			saveAs(blob, name["name"]);
       return "ok"
     }).pipe(catchError(this.handleError));
@@ -104,6 +112,17 @@ export class SpassService {
     .post(API_URL + UPLOAD_TOOL_ENDPOINT, formData, { headers: headers })
     .map(response => {
       return response;
+    }).pipe(catchError(this.handleError));
+  }
+
+  downloadTool(name: any): Observable<any> {
+    let headers: Headers = this.createHeaders()
+    return this.http
+    .get(API_URL + GET_TOOL_ENPOINT + name.id + '/', { headers: headers, responseType: ResponseContentType.Blob })
+    .map(response => {
+      let blob:any = new Blob([response.blob()], { type: 'application/octet-stream; charset=utf-8' });
+			saveAs(blob, name["name"]);
+      return "ok"
     }).pipe(catchError(this.handleError));
   }
 
@@ -153,6 +172,35 @@ export class SpassService {
     }).pipe(catchError(this.handleError));
   }
 
+  downloadResult(name: any): Observable<any> {
+    let headers: Headers = this.createHeaders()
+    return this.http
+    .get(API_URL + GET_RESULT_ENPOINT + name.id + '/file/', { headers: headers, responseType: ResponseContentType.Blob })
+    .map(response => {
+      let blob:any = new Blob([response.blob()], { type: 'application/octet-stream; charset=utf-8' });
+			saveAs(blob, name["name"]);
+      return "ok"
+    }).pipe(catchError(this.handleError));
+  }
+
+  resultData(name: any): Observable<any> {
+    let headers: Headers = this.createHeaders()
+    return this.http
+    .get(API_URL + GET_RESULT_ENPOINT + name.id + '/', { headers: headers })
+    .map(response => {
+      return response.json();
+    }).pipe(catchError(this.handleError));
+  }
+
+  deleteResult(name: any): Observable<any> {
+    let headers: Headers = this.createHeaders()
+    return this.http
+    .delete(API_URL + DELETE_RESULT_ENPOINT + name.id + '/', { headers: headers })
+    .map(response => {
+      return response;
+    }).pipe(catchError(this.handleError));
+  }
+
   // MARK: - Error Handling
 
   handleError(response: any) {
@@ -162,7 +210,6 @@ export class SpassService {
         default:
           Swal.fire("Server error", "Something went wrong", "error");
     }
-    console.log(response.status)
     return throwError(response);
   }
 

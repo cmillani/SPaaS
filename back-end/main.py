@@ -116,7 +116,7 @@ def submit_task():
     else:
         abort(401)
 
-@app.route("/api/results/")
+@app.route("/api/results/", methods=['GET'])
 @login_required
 def get_jobs_results():
     nodes = []
@@ -124,16 +124,42 @@ def get_jobs_results():
         nodes.append({"id": node.id, "name": node["name"]})
     return json.dumps(nodes)
 
-@app.route("/api/status/")
+@app.route("/api/status/", methods=['GET'])
 @login_required
 def get_jobs_status():
     all_status = db_client.statusCollection.find({'owner': g.user["email"]})
     return Response(dumps(all_status),status=200)
 
-@app.route("/api/results/<id>")
+@app.route("/api/results/<id>/file/", methods=['GET'])
 @login_required
-def get_job_results(id):
-    raise NotImplementedError()
+def get_job_result_file(id):
+    node = validate_access(g.user["email"], OPERATION_READ, id)
+    if node is not None:
+        return Response(blobMechanism.download_blob('seismic-results', node["blob"]))
+    else:
+        abort(401)
+
+@app.route("/api/results/<id>/", methods=['DELETE'])
+@login_required
+def delete_result(id):
+    node = validate_access(g.user["email"], OPERATION_WRITE, id)
+    if node is not None:
+        delete_blob(node["blob"], 'seismic-tools')
+        db_client.resultsCollection.delete_one({'_id': ObjectId(node["mongoid"])})
+        delete_entity_and_paths(id)
+        return "Ok"
+    else:
+        abort(401)
+
+@app.route("/api/results/<id>/", methods=['GET'])
+@login_required
+def get_job_result(id):
+    node = validate_access(g.user["email"], OPERATION_READ, id)
+    if node is not None:
+        result = db_client.resultsCollection.find_one({'_id': ObjectId(node['mongoid'])})
+        return Response(dumps(result))
+    else:
+        abort(401)
 
 # MARK: - Data
 
@@ -199,6 +225,15 @@ def get_tools_blob():
     for node in list_user_nodes(g.user["email"], "Tool"):
         nodes.append({"id": node.id, "name": node["name"]})
     return json.dumps(nodes)
+
+@app.route('/api/tools/<id>/', methods=['GET'])
+@login_required
+def get_tool_blob(id):
+    node = validate_access(g.user["email"], OPERATION_READ, id)
+    if node is not None:
+        return Response(blobMechanism.download_blob('seismic-tools', node["blob"]))
+    else:
+        abort(401)
 
 @app.route('/api/tools/', methods=['POST'])
 @login_required

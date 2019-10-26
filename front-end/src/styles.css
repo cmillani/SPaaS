@@ -31,3 +31,17 @@
 .special-table {
     margin-top: 20px;
 }
+
+.actionColumn {
+    width:350px;
+}
+
+.actionButton {
+    border-color: transparent;
+    width: 30%;
+    margin: 5px;
+}
+
+.dangerButton {
+    background-color: red
+}

@@ -36,6 +36,14 @@ export class ToolsManagementComponent implements OnInit {
     });
   }
 
+  downloadTool(name: any) {
+    this.apiService.downloadTool(name)
+    .subscribe(response => {
+      this.getTools();
+      console.log(response);
+    });
+  }
+
   deleteTool(name: any) {
     this.apiService.deleteTool(name)
     .subscribe(response => {
