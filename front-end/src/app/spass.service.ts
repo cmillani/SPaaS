@@ -63,7 +63,7 @@ export class SpassService {
     }).pipe(catchError(this.handleError));
   }
 
-  getBlobFiles(): Observable<string> {
+  getBlobFiles(): Observable<any> {
     let headers: Headers = this.createHeaders()
     return this.http
     .get(API_URL + GET_FILES_BLOB_ENDPOINT, { headers: headers})
@@ -72,7 +72,7 @@ export class SpassService {
     }).pipe(catchError(this.handleError));
   }
 
-  downloadData(name: any): Observable<string> {
+  downloadData(name: any): Observable<any> {
     let headers: Headers = this.createHeaders()
     return this.http
     .get(API_URL + GET_FILE_BLOB_ENDPOINT + name.id + '/', { headers: headers, responseType: ResponseContentType.Blob  })
@@ -107,7 +107,7 @@ export class SpassService {
     }).pipe(catchError(this.handleError));
   }
 
-  getTools(): Observable<string> {
+  getTools(): Observable<any> {
     let headers: Headers = this.createHeaders()
     return this.http
     .get(API_URL + GET_TOOLS_BLOB_ENDPOINT, { headers: headers })
@@ -135,7 +135,7 @@ export class SpassService {
     }).pipe(catchError(this.handleError));
   }
 
-  getResultsFiles(): Observable<string> {
+  getResultsFiles(): Observable<any> {
     let headers: Headers = this.createHeaders()
     return this.http
     .get(API_URL + GET_RESULTS_BLOB_ENDPOINT, { headers: headers })
@@ -144,7 +144,7 @@ export class SpassService {
     }).pipe(catchError(this.handleError));
   }
 
-  getStatus(): Observable<string> {
+  getStatus(): Observable<any> {
     let headers: Headers = this.createHeaders()
     return this.http
     .get(API_URL + STATUS_ENDPOINT, { headers: headers })

@@ -18,13 +18,52 @@ app = Flask(__name__)
 graphDb = GraphDatabase.driver(os.environ['GRAPHDB_CONNECTION_STRING'])
 CORS(app)
 
-db_client = pymongo.MongoClient(os.environ['SPASS_CONNECTION_STRING']).spassDatabase
-
 blobMechanism = BlobMechanismFactory.getMechanism()
 
 celery = Celery(app.name, broker=os.environ['SPASS_CELERY_BROKER'], backend=os.environ['SPASS_CELERY_BROKER'])
 
 authapi_endpoint = os.environ['AUTHAPI_ENDPOINT']
+
+# MARK: - Celery
+@celery.task
+def submit_celery(tool_name, data_name, args, user_email):
+    db_client = pymongo.MongoClient(os.environ['SPASS_CONNECTION_STRING']).spassDatabase
+    
+    file_id = str(uuid.uuid4())
+    db_client.statusCollection.insert_one({'owner': user_email, 'status': 'Executing', 'job_id': file_id})
+    blobMechanism.get_blob_to_path('seismic-tools', tool_name, tool_name)
+    blobMechanism.get_blob_to_path('seismic-data', data_name, data_name)
+    
+    cmd_args = ''
+    for i in range(1, len(args) + 1):
+        cmd_args = cmd_args + ' ' + args[str(i)]
+    
+    os.system('chmod +x ' + tool_name)
+
+    total_cmd = './' + tool_name + cmd_args
+    
+    os.system(total_cmd)
+    os.system('rm -rf ' + tool_name + ' ' + data_name)
+    file_name = file_id + '.tar.gz'
+    os.system('tar -czvf ' + file_name+ ' *.su')
+
+    data_register = {}
+    data_register['tool'] = tool_name
+    data_register['data'] = data_name
+    data_register['args'] = args
+    data_register['id'] = file_id
+
+    blobMechanism.create_blob_from_path('seismic-results', file_name, file_name)
+    os.system('rm -rf *.su ' + file_name)
+    db_client.resultsCollection.insert_one(data_register)
+
+    db_client.statusCollection.update({'job_id': file_id}, {'$set': { 'status': 'Executed'}})
+    
+    return
+
+# MARK: - API
+
+db_client = pymongo.MongoClient(os.environ['SPASS_CONNECTION_STRING']).spassDatabase
 
 def validate_token(token):
     data = {'token': token, 'client_id': "spaas"}
@@ -59,41 +98,6 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-@celery.task
-def submit_celery(tool_name, data_name, args, user_email):
-    file_id = str(uuid.uuid4())
-    db_client.statusCollection.insert_one({'owner': user_email, 'status': 'Executing', 'job_id': file_id})
-    blobMechanism.get_blob_to_path('seismic-tools', tool_name, tool_name)
-    blobMechanism.get_blob_to_path('seismic-data', data_name, data_name)
-    
-    cmd_args = ''
-    for i in range(1, len(args) + 1):
-        cmd_args = cmd_args + ' ' + args[str(i)]
-    
-    os.system('chmod +x ' + tool_name)
-
-    total_cmd = './' + tool_name + cmd_args
-    
-    os.system(total_cmd)
-    os.system('rm -rf ' + tool_name + ' ' + data_name)
-    file_name = file_id + '.tar.gz'
-    os.system('tar -czvf ' + file_name+ ' *.su')
-    
-    os.system('rm -rf *.su ' + file_name)
-
-    data_register = {}
-    data_register['tool'] = tool_name
-    data_register['data'] = data_name
-    data_register['args'] = args
-    data_register['id'] = file_id
-
-    blobMechanism.create_blob_from_path('seismic-results', file_name, file_name)
-    db_client.resultsCollection.insert_one(data_register)
-
-    db_client.statusCollection.update({'job_id': file_id}, {'$set': { 'status': 'Executed'}})
-    
-    return
-
 @app.route("/healthz")
 def health():
     return Response(status=200)
@@ -104,10 +108,10 @@ def health():
 @login_required
 def submit_task():
     data = request.get_json(force=True)
-    data_node = validate_access(g.user["email"], OPERATION_READ, data['data'].id)
-    tool_node = validate_access(g.user["email"], OPERATION_READ, data['tool'].id)
+    data_node = validate_access(g.user["email"], OPERATION_READ, data['data'])
+    tool_node = validate_access(g.user["email"], OPERATION_READ, data['tool'])
     if data_node is not None and tool_node is not None:
-        submit_celery.delay(data_node["blob"], tool_node["blob"], data['args'], g.user["email"])
+        submit_celery.delay(tool_node["blob"], data_node["blob"], data['args'], g.user["email"])
         return "SUCCESS"
     else:
         abort(401)

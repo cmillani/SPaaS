@@ -28,6 +28,8 @@ export class TasksManagementComponent implements OnInit {
 
     this.apiService.getBlobFiles().subscribe(response => {
       this.dataNames = response;
+      console.log(response)
+      console.log(response[0].id)
       this.selectedDataId = response[0].id
     });
 
