@@ -8,8 +8,6 @@ import 'rxjs/add/operator/map';
 import Swal from 'sweetalert2'
 
 const API_URL = environment.apiUrl;
-const CREATE_USER_ENDPOINT = environment.createUserEndpoint;
-const AUTH_USER_ENDPOINT = environment.authUserEndpoint;
 const UPLOAD_DATA_ENDPOINT = environment.uploadDataEndpoint;
 const GET_FILES_BLOB_ENDPOINT = environment.getFilesEndpoint;
 const GET_FILE_BLOB_ENDPOINT = environment.getFileEndpoint;
@@ -142,7 +140,7 @@ export class SpassService {
     return this.http
     .get(API_URL + GET_RESULTS_BLOB_ENDPOINT, { headers: headers })
     .map(response => {
-      return response['_body'];
+      return response.json();
     }).pipe(catchError(this.handleError));
   }
 
@@ -151,7 +149,7 @@ export class SpassService {
     return this.http
     .get(API_URL + STATUS_ENDPOINT, { headers: headers })
     .map(response => {
-      return response['_body'];
+      return response.json();
     }).pipe(catchError(this.handleError));
   }
 

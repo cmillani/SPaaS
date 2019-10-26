@@ -13,7 +13,7 @@
           <h3>Tool</h3> 
           <div class="form-group">
               <label for="scriptinput">Tool name</label>
-              <select class="form-control" [(ngModel)]="selectedToolId" name="selectedToolId" (blur)="loadParameters()"> 
+              <select class="form-control" [(ngModel)]="selectedToolId" name="selectedToolId" (change)="loadParameters()"> 
                 <option *ngFor="let toolName of toolNames" [value]="toolName.id" >{{ toolName.name }}</option>
               </select>
               <div class="form-group" *ngFor="let parameter of parameters">

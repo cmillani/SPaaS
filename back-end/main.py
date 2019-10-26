@@ -60,9 +60,9 @@ def login_required(f):
     return decorated_function
 
 @celery.task
-def submit_celery(tool_name, data_name, args):
+def submit_celery(tool_name, data_name, args, user_email):
     file_id = str(uuid.uuid4())
-    db_client.statusCollection.insert_one({'status': 'Executing', 'job_id': file_id})
+    db_client.statusCollection.insert_one({'owner': user_email, 'status': 'Executing', 'job_id': file_id})
     blobMechanism.get_blob_to_path('seismic-tools', tool_name, tool_name)
     blobMechanism.get_blob_to_path('seismic-data', data_name, data_name)
     
@@ -78,7 +78,7 @@ def submit_celery(tool_name, data_name, args):
     os.system('rm -rf ' + tool_name + ' ' + data_name)
     file_name = file_id + '.tar.gz'
     os.system('tar -czvf ' + file_name+ ' *.su')
-    blobMechanism.create_blob_from_path('seismic-results', file_name, file_name)
+    
     os.system('rm -rf *.su ' + file_name)
 
     data_register = {}
@@ -86,6 +86,8 @@ def submit_celery(tool_name, data_name, args):
     data_register['data'] = data_name
     data_register['args'] = args
     data_register['id'] = file_id
+
+    blobMechanism.create_blob_from_path('seismic-results', file_name, file_name)
     db_client.resultsCollection.insert_one(data_register)
 
     db_client.statusCollection.update({'job_id': file_id}, {'$set': { 'status': 'Executed'}})
@@ -102,8 +104,13 @@ def health():
 @login_required
 def submit_task():
     data = request.get_json(force=True)
-    submit_celery.delay(data['tool'], data['data'], data['args'])
-    return "SUCCESS"
+    data_node = validate_access(g.user["email"], OPERATION_READ, data['data'].id)
+    tool_node = validate_access(g.user["email"], OPERATION_READ, data['tool'].id)
+    if data_node is not None and tool_node is not None:
+        submit_celery.delay(data_node["blob"], tool_node["blob"], data['args'], g.user["email"])
+        return "SUCCESS"
+    else:
+        abort(401)
 
 @app.route("/api/results/")
 @login_required
@@ -114,7 +121,7 @@ def get_jobs_results():
 @app.route("/api/status/")
 @login_required
 def get_jobs_status():
-    all_status = db_client.statusCollection.find({})
+    all_status = db_client.statusCollection.find({'owner': g.user["email"]})
     return Response(dumps(all_status),status=200)
 
 @app.route("/api/results/<id>")
@@ -184,7 +191,7 @@ def get_parameters(id):
 def get_tools_blob():
     nodes = []
     for node in list_user_nodes(g.user["email"], "Tool"):
-        nodes.append({"id": node.id, "name": node["name"], "args": node["parameters"]})
+        nodes.append({"id": node.id, "name": node["name"]})
     return json.dumps(nodes)
 
 @app.route('/api/tools/', methods=['POST'])
