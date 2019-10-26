@@ -55,10 +55,10 @@ def submit_celery(tool_name, data_name, args, user_email):
 
     blobMechanism.create_blob_from_path('seismic-results', file_name, file_name)
     os.system('rm -rf *.su ' + file_name)
-    db_client.resultsCollection.insert_one(data_register)
 
+    insertedResult = db_client.resultsCollection.insert_one(data_register)
+    create_tool_node(user_email, file_name, "Result", file_name, str(insertedResult.inserted_id))
     db_client.statusCollection.update({'job_id': file_id}, {'$set': { 'status': 'Executed'}})
-    
     return
 
 # MARK: - API
@@ -119,8 +119,10 @@ def submit_task():
 @app.route("/api/results/")
 @login_required
 def get_jobs_results():
-    all_results = db_client.resultsCollection.find({})
-    return Response(dumps(all_results),status=200)
+    nodes = []
+    for node in list_user_nodes(g.user["email"], "Result"):
+        nodes.append({"id": node.id, "name": node["name"]})
+    return json.dumps(nodes)
 
 @app.route("/api/status/")
 @login_required
