@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { SpassService } from '../spass.service';
 import { Router } from '@angular/router';
+import { ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-data-management',
@@ -14,6 +15,8 @@ export class DataManagementComponent implements OnInit {
   nameOfFile: string;
   fileNames: any;
 
+  @ViewChild('fileInput') fileInput;
+
   constructor(private apiService: SpassService, private router: Router) { }
 
   ngOnInit() {
@@ -25,6 +28,17 @@ export class DataManagementComponent implements OnInit {
     this.loadFiles();
   }
 
+  createData() {
+    this.apiService.uploadData(this.fileToUpload, this.nameOfFile)
+    .subscribe(response => {
+      this.loadFiles();
+      console.log(response);
+      this.jobParams = "";
+      this.nameOfFile = "";
+      this.fileInput.nativeElement.value = "";
+    });
+  }
+
   loadFiles() {
     this.apiService.getBlobFiles().subscribe(response => {
       this.fileNames = response;
@@ -33,11 +47,6 @@ export class DataManagementComponent implements OnInit {
 
   onFileChange(files: FileList) {
     this.fileToUpload = files.item(0);
-    this.apiService.uploadData(this.fileToUpload, this.nameOfFile)
-    .subscribe(response => {
-      this.loadFiles();
-      console.log(response);
-    });
   }
 
   downloadData(name: any) {

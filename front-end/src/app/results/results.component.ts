@@ -12,7 +12,7 @@ export class ResultsComponent implements OnInit {
   selectedResult: any;
 
   constructor(private apiservice: SpassService) {
-   }
+  }
 
   ngOnInit() {
     this.loggedMail = localStorage.getItem('loggedMail');

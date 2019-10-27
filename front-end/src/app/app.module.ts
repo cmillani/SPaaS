@@ -5,7 +5,7 @@ import { HttpModule } from '@angular/http';
 import { HttpClientModule } from '@angular/common/http';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatRadioModule, MatIconModule } from '@angular/material';
+import { MatRadioModule, MatIconModule, MatDividerModule } from '@angular/material';
 
 import { AppComponent } from './app.component';
 import { DefinitionComponent } from './definition/definition.component';
@@ -21,14 +21,16 @@ import { NavigationBarComponent } from './navigationBar/navigationBar.component'
 import { SideMenuComponent } from './sidemenu/sidemenu.component'
 import { ShareModal } from './share-modal/share-modal.component'
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { AuthModule, 
-         ConfigResult, 
-         OidcConfigService, 
-         OidcSecurityService, 
+import { AuthModule,
+         ConfigResult,
+         OidcConfigService,
+         OidcSecurityService,
          OpenIdConfiguration } from 'angular-auth-oidc-client';
- 
+import { GroupsManagementComponent } from './groups-management/groups-management.component';
+import { FoldersManagementComponent } from './folders-management/folders-management.component';
+
 export function loadConfig(oidcConfigService: OidcConfigService) {
-  return () => 
+  return () =>
     oidcConfigService.load_using_stsServer(
       'http://localhost:3000'
     );
@@ -46,9 +48,12 @@ export function loadConfig(oidcConfigService: OidcConfigService) {
     LoginComponent,
     DataManagementComponent,
     ToolsManagementComponent,
-    TasksManagementComponent
+    TasksManagementComponent,
+    GroupsManagementComponent,
+    FoldersManagementComponent
   ],
   imports: [
+    MatDividerModule,
     MatRadioModule,
     MatIconModule,
     BrowserAnimationsModule,
@@ -58,7 +63,7 @@ export function loadConfig(oidcConfigService: OidcConfigService) {
     AppRoutingModule,
     FormsModule,
     HttpModule,
-    AuthModule.forRoot(),
+    AuthModule.forRoot()
   ],
   providers: [
     OidcConfigService,
@@ -70,9 +75,11 @@ export function loadConfig(oidcConfigService: OidcConfigService) {
     },
     SpassService
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [
+    AppComponent
+  ]
 })
-export class AppModule { 
+export class AppModule {
   constructor(private oidcSecurityService: OidcSecurityService, private oidcConfigService: OidcConfigService) {
         this.oidcConfigService.onConfigurationLoaded.subscribe((configResult: ConfigResult) => {
           const config: OpenIdConfiguration = {
@@ -91,7 +98,7 @@ export class AppModule {
             unauthorized_route: "/unauthorized",
             log_console_warning_active: true,
             max_id_token_iat_offset_allowed_in_seconds: 10
-          }; 
+          };
           this.oidcSecurityService.setupModule(config, configResult.authWellknownEndpoints);
         });
     }
