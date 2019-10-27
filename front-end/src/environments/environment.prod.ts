@@ -12,10 +12,14 @@ export const environment = {
   getToolsEndpoint: '/api/tools/',
   deleteToolsEnpoint: '/api/tools/',
   getParametersEndpoint: '/api/tools/',
+  getToolEnpoint: '/api/tools/',
   
   submitTaskEndpoint: '/api/tasks/submit/',
   getResultsBlobEndpoints: '/api/results/',
   statusEndpoint: '/api/status/',
+  getResultBlobEndpoints: '/api/results/',
+  getResultEndpoints: '/api/results/',
+  deleteResultEndpoints: '/api/results/',
 
   shareEndpoint: '/api/entity/accesslist/'
 };

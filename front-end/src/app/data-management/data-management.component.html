@@ -34,18 +34,17 @@
         <table class="table table-bordered">
             <thead>
               <tr>
-                <th scope="col">File Name</th>
-                <th scope="col" class="actionColumn">Actions</th>
+                <th scope="col" class="namesColumn">File Name</th>
+                <th scope="col">Actions</th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let name of fileNames">
                 <td scope="row">{{ name.name }}</td>
-                <td>
-                  <button class="btn btn-primary dangerButton" (click)="deleteData(name)">Delete</button>
-                  <button class="btn btn-primary" (click)="downloadData(name)">Download</button>
-                  <app-sharemodal [sharingData]="name">
-                  </app-sharemodal>
+                <td class="actionColumn">
+                  <button class="btn btn-primary dangerButton actionButton" (click)="deleteData(name)"><mat-icon>delete_forever</mat-icon></button>
+                  <button class="btn btn-primary actionButton" (click)="downloadData(name)"><mat-icon>cloud_download</mat-icon></button>
+                  <app-sharemodal [sharingData]="name"></app-sharemodal>
                 </td>
               </tr>
             </tbody>

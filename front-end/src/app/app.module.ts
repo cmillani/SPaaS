@@ -5,7 +5,7 @@ import { HttpModule } from '@angular/http';
 import { HttpClientModule } from '@angular/common/http';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatRadioModule } from '@angular/material';
+import { MatRadioModule, MatIconModule } from '@angular/material';
 
 import { AppComponent } from './app.component';
 import { DefinitionComponent } from './definition/definition.component';
@@ -50,6 +50,7 @@ export function loadConfig(oidcConfigService: OidcConfigService) {
   ],
   imports: [
     MatRadioModule,
+    MatIconModule,
     BrowserAnimationsModule,
     NgbModule,
     BrowserModule,

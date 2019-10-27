@@ -31,3 +31,21 @@
 .special-table {
     margin-top: 20px;
 }
+
+.namesColumn {
+    width:100%;
+}
+
+.actionColumn {
+    white-space: nowrap;
+}
+
+.actionButton {
+    display: inline-block;
+    border-color: transparent;
+    margin: 5px;
+}
+
+.dangerButton {
+    background-color: red
+}

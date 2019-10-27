@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { SpassService } from '../spass.service';
 import { Router } from '@angular/router';
-import { saveAs } from 'file-saver';
 
 @Component({
   selector: 'app-data-management',
