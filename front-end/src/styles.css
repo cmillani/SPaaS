@@ -32,13 +32,17 @@
     margin-top: 20px;
 }
 
+.namesColumn {
+    width:100%;
+}
+
 .actionColumn {
-    width:350px;
+    white-space: nowrap;
 }
 
 .actionButton {
+    display: inline-block;
     border-color: transparent;
-    width: 30%;
     margin: 5px;
 }
 

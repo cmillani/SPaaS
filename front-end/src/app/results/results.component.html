@@ -10,18 +10,18 @@
             <table class="table table-bordered">
                 <thead>
                   <tr>
-                    <th scope="col">Id</th>
+                    <th scope="col" class="namesColumn">Id</th>
                     <th scope="col">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr *ngFor="let result of results">
                     <td>{{ result.name }}</td>
-                    <td> 
-                      <button class="btn btn-primary dangerButton actionButton" (click)="deleteData(result)">Delete</button>
-                      <button class="btn btn-primary actionButton" (click)="downloadData(result)">Download</button>
-                      <app-sharemodal [sharingData]="result"></app-sharemodal>
-                      <button type="button" class="btn btn-primary actionButton"  data-toggle="modal" data-target="#exampleModal" (click)="selectResult(result)">Details</button>
+                    <td class="actionColumn">
+                      <button class="btn btn-primary dangerButton actionButton" (click)="deleteData(result)"><mat-icon>delete_forever</mat-icon></button>
+                      <button class="btn btn-primary actionButton" (click)="downloadData(result)"><mat-icon>cloud_download</mat-icon></button>
+                      <button class="btn btn-primary actionButton"  data-toggle="modal" data-target="#exampleModal" (click)="selectResult(result)"><mat-icon>details</mat-icon></button>
+                      <app-sharemodal [sharingData]="result" class="actionButton"></app-sharemodal>
                     </td>
                   </tr>
                 </tbody>

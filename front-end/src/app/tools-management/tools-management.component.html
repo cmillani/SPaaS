@@ -38,16 +38,16 @@
           <table class="table table-bordered">
               <thead>
                 <tr>
-                  <th scope="col">Download Files</th>
-                  <th scope="col" class="actionColumn">Actions</th>
+                  <th scope="col" class="namesColumn">Download Files</th>
+                  <th scope="col">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 <tr *ngFor="let name of fileNames">
                   <td scope="row">{{ name.name }}</td>
-                  <td>
-                    <button class="btn btn-primary dangerButton actionButton" (click)="deleteTool(name)">Delete</button>
-                    <button class="btn btn-primary actionButton" (click)="downloadTool(name)">Download</button>
+                  <td class="actionColumn">
+                    <button class="btn btn-primary dangerButton actionButton" (click)="deleteTool(name)"><mat-icon>delete_forever</mat-icon></button>
+                    <button class="btn btn-primary actionButton" (click)="downloadTool(name)"><mat-icon>cloud_download</mat-icon></button>
                     <app-sharemodal [sharingData]="name"></app-sharemodal>
                   </td>
                 </tr>
