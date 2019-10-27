@@ -8,6 +8,8 @@ import { LoginComponent } from './login/login.component';
 import { DataManagementComponent } from './data-management/data-management.component';
 import { ToolsManagementComponent } from './tools-management/tools-management.component';
 import { TasksManagementComponent } from './tasks-management/tasks-management.component';
+import { GroupsManagementComponent } from './groups-management/groups-management.component';
+import { FoldersManagementComponent } from './folders-management/folders-management.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -17,7 +19,9 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'datamanager', component: DataManagementComponent },
   { path: 'toolsmanager', component: ToolsManagementComponent },
-  { path: 'tasksmanager', component: TasksManagementComponent }
+  { path: 'tasksmanager', component: TasksManagementComponent },
+  { path: 'groupsmanager', component: GroupsManagementComponent },
+  { path: 'foldersmanager', component: FoldersManagementComponent }
 ];
 
 

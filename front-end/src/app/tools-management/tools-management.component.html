@@ -1,20 +1,17 @@
 <app-navigationBar></app-navigationBar>
-  
+
+<div>
+  <app-sidemenu class="sideMenu"></app-sidemenu>
+
+  <div class="pageContent">
   <div class="pagetitle">
-  <h2>Tools Manager</h2>
+    <h2>Tools Manager</h2>
   </div>
-  
-  <app-sidemenu></app-sidemenu>  
-  
-  <div class="container">
-  <div class="custom-table">
+  <mat-divider></mat-divider>
+  <div>
+    <br>
     <form>
-            <div class="custom-forms">
-            <h3>Move</h3> 
-            <div class="form-group">
-                <label for="scriptinput">Name of the tool</label>
-                <input  class="form-control" id="scriptinput" placeholder="Search for the tool name">
-            </div>
+            <div>
             <h3>Upload</h3>
             <div class="form-group">
                 <label for="codeinput">Tool name</label>
@@ -22,23 +19,26 @@
             </div>
             <div class="form-group">
                 <label for="codeinput">Parameters to run</label>
-                <input  class="form-control" name="jobParams" [(ngModel)]="jobParams" id="jobParams" 
+                <input  class="form-control" name="jobParams" [(ngModel)]="jobParams" id="jobParams"
                 placeholder="Put the parameters and the explanation o which parameter separeted by comma. Ex: 1:kind of job,2:number of repetitions">
             </div>
             </div>
+            <input type="file" (change)="onFileChange($event.target.files)" #fileInput >
+            <button class="btn btn-primary formFieldSend" (click)="createTool()">Save!</button>
     </form>
   </div>
-  </div>
-  <div class="file-button">
-      <input type="file" id="file-input" (change)="onFileChange($event.target.files)" #fileInput >
-  </div>
-  <div class="container">
-  <div class="special-table">
-  <div class="files-table">
+
+  <br>
+  <mat-divider></mat-divider>
+  <br>
+
+  <div>
+  <div>
+  <div>
           <table class="table table-bordered">
               <thead>
                 <tr>
-                  <th scope="col" class="namesColumn">Download Files</th>
+                  <th scope="col" class="namesColumn">Tools</th>
                   <th scope="col">Actions</th>
                 </tr>
               </thead>
@@ -56,3 +56,5 @@
   </div>
   </div>
   </div>
+</div>
+</div>

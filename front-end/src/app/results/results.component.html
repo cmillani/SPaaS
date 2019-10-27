@@ -1,12 +1,14 @@
 <app-navigationBar></app-navigationBar>
-  <div class="pagetitle">
-      <h2>Results</h2>
-  </div>
-  
-  <app-sidemenu></app-sidemenu>
+  <div>
+  <app-sidemenu class="sideMenu"></app-sidemenu>
 
-  <div class="container">
-        <div class="custom-table">
+  <div class="pageContent">
+      <div class="pagetitle">
+          <h2>Results</h2>
+      </div>
+      <mat-divider></mat-divider>
+        <div>
+          <br>
             <table class="table table-bordered">
                 <thead>
                   <tr>
@@ -26,8 +28,9 @@
                   </tr>
                 </tbody>
               </table>
-         </div>             
-    </div>
+         </div>
+  </div>
+  </div>
 
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
