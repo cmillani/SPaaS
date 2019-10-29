@@ -11,19 +11,30 @@ export class GroupsManagementComponent implements OnInit {
   nameOfNewGroup: string
   groups: any
 
-  constructor(private apiservice: SpassService) { }
+  constructor(private apiService: SpassService) { }
 
   ngOnInit() {
-    this.groups = [{name: "Test group"}]
+    this.loadGroups()
+  }
+
+  loadGroups() {
+    this.apiService.listGroups().subscribe( response => {
+      this.groups = response
+    })
   }
 
   deleteGroup(group: any) {
-
+    this.apiService.deleteGroup(group.id).subscribe(response => {
+      console.log(response)
+      this.loadGroups()
+    })
   }
 
   createGroup() {
-    this.groups.push({name: this.nameOfNewGroup})
-    this.nameOfNewGroup = ""
+    this.apiService.createGroup(this.nameOfNewGroup).subscribe(response => {
+      this.nameOfNewGroup = ""
+      this.loadGroups()
+    });
   }
 
 }

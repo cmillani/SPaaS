@@ -10,7 +10,7 @@ import json
 @login_required
 def create_group():
     data = request.get_json(force=True)
-    create_group(data["name"], g.user["email"])
+    create_group_node(data["name"], g.user["email"])
     return "Ok"
 
 @app.route("/api/groups/", methods=['GET'])
@@ -22,6 +22,7 @@ def list_groups():
     return json.dumps(groups)
 
 @app.route("/api/groups/<id>/", methods=['DELETE'])
+@login_required
 def delete_group(id):
     node = validate_ownership(g.user["email"], id)
     if node is not None:

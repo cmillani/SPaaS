@@ -12,7 +12,7 @@ import json
 @login_required
 def create_folder():
     data = request.get_json(force=True)
-    create_folder(data["name"], g.user["email"])
+    create_folder_node(data["name"], g.user["email"])
     return "Ok"
 
 @app.route("/api/folders/", methods=['GET'])
@@ -24,6 +24,7 @@ def list_folders():
     return json.dumps(folders)
 
 @app.route("/api/folders/<id>/", methods=['DELETE'])
+@login_required
 def delete_folder(id):
     node = validate_ownership(g.user["email"], id)
     if node is not None:
