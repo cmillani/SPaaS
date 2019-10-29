@@ -77,3 +77,44 @@ def add_permission(entity_id, user_email, permission):
                 uemail=user_email, id=int(entity_id), permission=permission)
     with graphDb.session() as session:
         session.write_transaction(_add_permission)
+
+
+# MARK: Folders
+
+def create_folder(folder_name, user_email):
+    def _create_folder(tx):
+        tx.run("MATCH (user:Person {email: {uemail}}) "
+                "CREATE (folder:Folder {name: {fname}})"
+                "CREATE (user)-[:OWNS]->(folder) "
+                "CREATE (user)-[:MEMBER]->(folder) ", 
+                uemail=user_email, fname=folder_name)
+    with graphDb.session() as session:
+        session.write_transaction(_create_folder)
+
+def get_folders(user_email):
+    def _create_folder(tx):
+        return tx.run("MATCH (user:Person {email: {uemail}}) "
+                        "MATCH (user)-[:MEMBER*]->(folder:Folder) "
+                        "RETURN folder ", uemail=user_email)
+    with graphDb.session() as session:
+        return session.read_transaction(_create_folder).graph().nodes
+
+# MARK: Groups
+
+def create_group(folder_name, user_email):
+    def _create_folder(tx):
+        tx.run("MATCH (user:Person {email: {uemail}}) "
+                "CREATE (group:Group {name: {fname}})"
+                "CREATE (user)-[:OWNS]->(group) "
+                "CREATE (user)-[:MEMBER]->(group) ", 
+                uemail=user_email, fname=folder_name)
+    with graphDb.session() as session:
+        session.write_transaction(_create_folder)
+
+def get_groups(user_email):
+    def _create_folder(tx):
+        return tx.run("MATCH (user:Person {email: {uemail}}) "
+                        "MATCH (user)-[:MEMBER*]->(group:Group) "
+                        "RETURN group ", uemail=user_email)
+    with graphDb.session() as session:
+        return session.read_transaction(_create_folder).graph().nodes
