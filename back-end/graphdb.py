@@ -81,7 +81,7 @@ def add_permission(entity_id, user_email, permission):
 
 # MARK: Folders
 
-def create_folder(folder_name, user_email):
+def create_folder_node(folder_name, user_email):
     def _create_folder(tx):
         tx.run("MATCH (user:Person {email: {uemail}}) "
                 "CREATE (folder:Folder {name: {fname}})"
@@ -101,7 +101,7 @@ def get_folders(user_email):
 
 # MARK: Groups
 
-def create_group(folder_name, user_email):
+def create_group_node(folder_name, user_email):
     def _create_folder(tx):
         tx.run("MATCH (user:Person {email: {uemail}}) "
                 "CREATE (group:Group {name: {fname}})"

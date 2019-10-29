@@ -18,13 +18,16 @@ export const environment = {
   deleteToolsEnpoint: '/api/tools/',
   getParametersEndpoint: '/api/tools/',
   getToolEnpoint: '/api/tools/',
-  
+
   submitTaskEndpoint: '/api/tasks/submit/',
   getResultsBlobEndpoints: '/api/results/',
   statusEndpoint: '/api/status/',
   getResultBlobEndpoints: '/api/results/',
   getResultEndpoints: '/api/results/',
   deleteResultEndpoints: '/api/results/',
+
+  foldersEndpoints: '/api/folders/',
+  groupsEndpoints: '/api/groups/',
 
   shareEndpoint: '/api/entity/accesslist/'
 };

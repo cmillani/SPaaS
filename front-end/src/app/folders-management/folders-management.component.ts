@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { SpassService } from '../spass.service';
 
 @Component({
   selector: 'app-folders-management',
@@ -7,22 +8,33 @@ import { Component, OnInit } from '@angular/core';
 })
 export class FoldersManagementComponent implements OnInit {
 
-  constructor() { }
+  constructor(private apiService: SpassService) { }
 
   nameOfNewFolder: string
   folders: any
 
   ngOnInit() {
-    this.folders = [{name: "Test folder"}]
+    this.loadFolders()
   }
 
-  deleteFolder(group: any) {
+  loadFolders() {
+    this.apiService.listFolders().subscribe( response => {
+      this.folders = response
+    })
+  }
 
+  deleteFolder(folder: any) {
+    this.apiService.deleteFolder(folder.id).subscribe(response => {
+      console.log(response)
+      this.loadFolders()
+    })
   }
 
   createFolder() {
-    this.folders.push({name: this.nameOfNewFolder})
-    this.nameOfNewFolder = ""
+    this.apiService.createFolder(this.nameOfNewFolder).subscribe(response => {
+      this.nameOfNewFolder = ""
+      this.loadFolders()
+    });
   }
 
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Http, Headers, ResponseContentType } from '@angular/http';
+import { Http, Headers, ResponseContentType, Response } from '@angular/http';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -25,7 +25,11 @@ const GET_RESULTS_BLOB_ENDPOINT = environment.getResultsBlobEndpoints;
 const GET_RESULT_ENPOINT = environment.getResultBlobEndpoints;
 const STATUS_ENDPOINT = environment.statusEndpoint;
 const DOWNLOAD_DATA_ENDPOINT = environment.getResultEndpoints;
-const DELETE_RESULT_ENPOINT = environment.deleteResultEndpoints;
+const DELETE_RESULT_ENDPOINT = environment.deleteResultEndpoints;
+
+const FOLDERS_ENDPOINT = environment.foldersEndpoints;
+
+const GROUPS_ENDPOINT = environment.groupsEndpoints;
 
 const SHARE_ENDPOINT = environment.shareEndpoint;
 
@@ -195,7 +199,7 @@ export class SpassService {
   deleteResult(name: any): Observable<any> {
     let headers: Headers = this.createHeaders()
     return this.http
-    .delete(API_URL + DELETE_RESULT_ENPOINT + name.id + '/', { headers: headers })
+    .delete(API_URL + DELETE_RESULT_ENDPOINT + name.id + '/', { headers: headers })
     .map(response => {
       return response;
     }).pipe(catchError(this.handleError));
@@ -220,7 +224,67 @@ export class SpassService {
     return this.http
     .post(API_URL + SHARE_ENDPOINT, {email: email, entity: sharingData, permission: permission}, { headers: headers })
     .map(response => {
-      return response['_body'];
+      return response;
+    }).pipe(catchError(this.handleError));
+  }
+
+  // MARK: - Folders
+
+  createFolder(name): Observable<Response> {
+    let headers: Headers = this.createHeaders()
+    return this.http
+    .post(API_URL + FOLDERS_ENDPOINT, {name: name}, { headers: headers })
+    .map(response => {
+      return response;
+    }).pipe(catchError(this.handleError));
+  }
+
+  deleteFolder(id): Observable<Response> {
+    let headers: Headers = this.createHeaders()
+    return this.http
+    .delete(API_URL + FOLDERS_ENDPOINT + id + "/", { headers: headers })
+    .map(response => {
+      return response;
+    }).pipe(catchError(this.handleError));
+  }
+
+  listFolders(): Observable<object> {
+    let headers: Headers = this.createHeaders()
+    console.log(headers)
+    return this.http
+    .get(API_URL + FOLDERS_ENDPOINT, { headers: headers })
+    .map(response => {
+      return response.json();
+    }).pipe(catchError(this.handleError));
+  }
+
+  // MARK: - Groups
+
+  createGroup(name): Observable<Response> {
+    let headers: Headers = this.createHeaders()
+    return this.http
+    .post(API_URL + GROUPS_ENDPOINT, {name: name}, { headers: headers })
+    .map(response => {
+      return response;
+    }).pipe(catchError(this.handleError));
+  }
+
+  deleteGroup(id): Observable<Response> {
+    let headers: Headers = this.createHeaders()
+    return this.http
+    .delete(API_URL + GROUPS_ENDPOINT + id + "/", { headers: headers })
+    .map(response => {
+      return response;
+    }).pipe(catchError(this.handleError));
+  }
+
+  listGroups(): Observable<object> {
+    let headers: Headers = this.createHeaders()
+    console.log(headers)
+    return this.http
+    .get(API_URL + GROUPS_ENDPOINT, { headers: headers })
+    .map(response => {
+      return response.json();
     }).pipe(catchError(this.handleError));
   }
 

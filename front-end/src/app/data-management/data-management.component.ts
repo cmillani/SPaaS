@@ -33,7 +33,6 @@ export class DataManagementComponent implements OnInit {
     .subscribe(response => {
       this.loadFiles();
       console.log(response);
-      this.jobParams = "";
       this.nameOfFile = "";
       this.fileInput.nativeElement.value = "";
     });
