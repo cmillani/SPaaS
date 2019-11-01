@@ -35,6 +35,8 @@ const SHARE_ENDPOINT = environment.shareEndpoint;
 const GET_PATH_ENDPOINT = environment.getPathEndpoint;
 const MOVE_FOLDER_ENDPOINT = environment.moveFolderEndpoint;
 
+const ADD_GROUP_MEMBER_ENDPOINT = environment.addGroupMemberEndpoint;
+
 @Injectable()
 export class SpassService {
   public currentMail: string;
@@ -252,6 +254,15 @@ export class SpassService {
     let headers: Headers = this.createHeaders()
     return this.http
     .post(API_URL + SHARE_ENDPOINT(sharingData.id), {email: email, entity: sharingData, permission: permission}, { headers: headers })
+    .map(response => {
+      return response;
+    }).pipe(catchError(this.handleError));
+  }
+
+  addGroupMember(group: any, member: string): Observable<Response> {
+    let headers: Headers = this.createHeaders()
+    return this.http
+    .post(API_URL + ADD_GROUP_MEMBER_ENDPOINT(group.id), {email: member, group: group}, { headers: headers })
     .map(response => {
       return response;
     }).pipe(catchError(this.handleError));

@@ -36,7 +36,7 @@ def validate_access(user, type, node_id):
     def _validate_access(tx):
         return tx.run("MATCH (user:Person {email: {uemail}}) "
                         "MATCH (target) WHERE id(target) = {id} "
-                        "MATCH p = (user)-[:OWNS|MEMBER|PERMISSION*]->(target) "
+                        "MATCH p = (user)-[:PERMISSION]->(target) "
                         "WHERE all(rel in relationships(p) WHERE rel.level IS NULL OR rel.level >= {level}) "
                         "RETURN target", uemail=user, id=int(node_id), level=type)
     with graphDb.session() as session:
@@ -87,6 +87,28 @@ def add_permission_group(entity_id, group_id, permission):
     with graphDb.session() as session:
         session.write_transaction(_add_permission)
 
+def validate_membership(email, groupId):
+    def _validate_membership(tx):
+        return tx.run("MATCH (user:Person {email: {uemail}}) "
+                        "MATCH (target) WHERE id(target) = {id} "
+                        "MATCH p = (user)-[:MEMBER]->(target) "
+                        "RETURN p", uemail=email, id=int(groupId))
+    with graphDb.session() as session:
+        nodes = session.read_transaction(_validate_membership).graph().nodes
+        target_node = None
+        for node in nodes:
+            target_node = node
+            break
+        return target_node
+
+def add_member(email, groupId):
+    def _add_member(tx):
+        tx.run("MATCH (user:Person {email: {uemail}}) "
+                "MATCH (group:Group) WHERE id(group) = {groupId} "
+                "CREATE (user)-[:MEMBER]->(group) ", 
+                uemail=email, groupId=int(groupId))
+    with graphDb.session() as session:
+        session.write_transaction(_add_member)
 
 # MARK: Folders
 

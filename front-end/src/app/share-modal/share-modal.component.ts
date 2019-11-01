@@ -13,6 +13,7 @@ import { MatTabChangeEvent } from '@angular/material';
 export class ShareModal implements OnInit {
 
   @Input('sharingData') sharingData: any;
+  @Input('isGroup') isGroup: boolean = false;
   email: string;
   permission: string = "1";
   currentModal: NgbModalRef
@@ -57,8 +58,6 @@ export class ShareModal implements OnInit {
   }
 
   share() {
-    console.log(this.actionTabIndex)
-    console.log(this.selectedShareIndex)
     if (this.actionTabIndex == 0) {
       if (this.selectedShareIndex == 0) {
         this.shareWithPerson()
@@ -79,11 +78,19 @@ export class ShareModal implements OnInit {
   }
 
   shareWithPerson() {
-    this.apiService.share(this.sharingData, this.email, this.permission).subscribe(response => {
-      this.email = null
-      this.permission = "1"
-      this.currentModal.close()
-    });
+    if (this.isGroup) {
+      this.apiService.addGroupMember(this.sharingData, this.email).subscribe(response => {
+        this.email = null
+        this.permission = "1"
+        this.currentModal.close()
+      });
+    } else {
+      this.apiService.share(this.sharingData, this.email, this.permission).subscribe(response => {
+        this.email = null
+        this.permission = "1"
+        this.currentModal.close()
+      });
+    }
   }
 
   moveToFolder() {

@@ -15,18 +15,18 @@
               <mat-tab label="Person">
                 <input class="form-control" name="email" [(ngModel)]="email" id="email" placeholder="george@corp.com">
               </mat-tab>
-              <mat-tab label="Group">
+              <mat-tab *ngIf="isGroup == false" label="Group">
                 <select class="form-control" [(ngModel)]="selectedGroupId" name="selectedGroupId">
                   <option *ngFor="let group of groups" [value]="group.id" >{{ group.name }}</option>
                 </select>
               </mat-tab>
             </mat-tab-group>
-            <mat-radio-group aria-label="Access level:" [(ngModel)]="permission"><br>
+            <mat-radio-group *ngIf="isGroup == false" aria-label="Access level:" [(ngModel)]="permission"><br>
               <mat-radio-button value="1" checked>Read</mat-radio-button><br>
               <mat-radio-button value="10">Write</mat-radio-button>
             </mat-radio-group>
           </mat-tab>
-          <mat-tab label="Move">
+          <mat-tab *ngIf="isGroup == false" label="Move">
             <p>Move {{sharingData.name}}</p>
             <p>Origin: {{originFolder}}</p>
             <p>Destination:</p>
