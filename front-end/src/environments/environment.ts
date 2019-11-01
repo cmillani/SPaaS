@@ -29,5 +29,7 @@ export const environment = {
   foldersEndpoints: '/api/folders/',
   groupsEndpoints: '/api/groups/',
 
-  shareEndpoint: '/api/entity/accesslist/'
+  shareEndpoint: (id) => {return `/api/entities/${id}/accesslist/`},
+  getPathEndpoint: (id) => {return `/api/entities/${id}/path/`},
+  moveFolderEndpoint: (id) => {return `/api/entities/${id}/path/`}
 };

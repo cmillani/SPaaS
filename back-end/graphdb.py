@@ -78,6 +78,15 @@ def add_permission(entity_id, user_email, permission):
     with graphDb.session() as session:
         session.write_transaction(_add_permission)
 
+def add_permission_group(entity_id, group_id, permission):
+    def _add_permission(tx):
+        tx.run("MATCH (group:Group) WHERE id(group) = {groupId} "
+                "MATCH (entity) WHERE id(entity) = {id} "
+                "CREATE (group)-[:PERMISSION {level: {permission}}]->(entity) ", 
+                groupId=int(group_id), id=int(entity_id), permission=permission)
+    with graphDb.session() as session:
+        session.write_transaction(_add_permission)
+
 
 # MARK: Folders
 
