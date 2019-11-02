@@ -51,8 +51,9 @@ def move_entity(id):
 
 @app.route('/api/entities/<id>/path/', methods=['GET'])
 @login_required
-def get_entity(id):
-    return json.dumps({"path": "TestPath"})
+def entity_path(id):
+    validate_access(g.user["email"], OPERATION_READ, id)
+    return json.dumps({"path": get_entity_path(id)})
 
 @app.route('/api/groups/<id>/accesslist/', methods=['POST'])
 @login_required
