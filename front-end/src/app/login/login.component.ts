@@ -9,10 +9,6 @@ import { OidcSecurityService } from 'angular-auth-oidc-client';
   styleUrls: ['./login.component.css'],
 })
 export class LoginComponent implements OnInit {
-  email: string;
-  pass: string;
-  finalData: object;
-  alertMessage: string;
 
   isAuthenticated: boolean;
   userData: any;
@@ -28,10 +24,9 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.finalData = {};
-    this.alertMessage = '';
 
     this.oidcSecurityService.getIsAuthorized().subscribe(auth => {
+      console.log(auth)
       this.isAuthenticated = auth;
     });
 

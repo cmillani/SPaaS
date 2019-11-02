@@ -18,6 +18,12 @@ export class NavigationBarComponent implements OnInit {
         if (!this.loggedMail) {
             this.router.navigate(['/', 'login']);
         }
+
+        this.oidcSecurityService.getIsAuthorized().subscribe(auth => {
+            if (auth == false) {
+                this.router.navigate(['/', 'login']);
+            }
+        });
     }
 
     logout() {
