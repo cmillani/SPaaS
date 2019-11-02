@@ -37,6 +37,13 @@ export class ShareModal implements OnInit {
     this.loadOriginPath()
   }
 
+  clearData() {
+    this.email = null
+    this.permission = "1"
+    this.selectedShareIndex = 0
+    this.actionTabIndex = 0
+  }
+
   loadOriginPath() {
     this.apiService.getPath(this.sharingData).subscribe( response => {
       this.originFolder = response
@@ -71,8 +78,7 @@ export class ShareModal implements OnInit {
 
   shareWithGroup() {
     this.apiService.shareWithGroup(this.sharingData, this.selectedGroupId, this.permission).subscribe(response => {
-      this.email = null
-      this.permission = "1"
+      this.clearData()
       this.currentModal.close()
     });
   }
@@ -80,21 +86,23 @@ export class ShareModal implements OnInit {
   shareWithPerson() {
     if (this.isGroup) {
       this.apiService.addGroupMember(this.sharingData, this.email).subscribe(response => {
-        this.email = null
-        this.permission = "1"
+        this.clearData()
         this.currentModal.close()
       });
     } else {
       this.apiService.share(this.sharingData, this.email, this.permission).subscribe(response => {
-        this.email = null
-        this.permission = "1"
+        this.clearData()
         this.currentModal.close()
       });
     }
   }
 
   moveToFolder() {
-
+    this.apiService.movePath(this.sharingData, this.selectedFolderId, this.permission).subscribe(response => {
+        this.clearData()
+        this.loadOriginPath()
+        this.currentModal.close()
+      });
   }
 
   actionTabChanged(tabChangeEvent: MatTabChangeEvent): void {

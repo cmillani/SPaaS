@@ -226,7 +226,7 @@ export class SpassService {
   movePath(data: any, folderId: number, permission: string): Observable<Response> {
     let headers: Headers = this.createHeaders()
     return this.http
-    .patch(API_URL + GET_PATH_ENDPOINT(data.id), {folderId: folderId, entity: data, permission: permission}, { headers: headers })
+    .patch(API_URL + MOVE_FOLDER_ENDPOINT(data.id), {folderId: folderId, entity: data, permission: permission}, { headers: headers })
     .map(response => {
       return response;
     }).pipe(catchError(this.handleError));

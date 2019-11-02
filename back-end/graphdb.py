@@ -32,13 +32,13 @@ def list_user_nodes(user, data_type):
     with graphDb.session() as session:
         return session.read_transaction(_list_nodes).graph().nodes
 
-def validate_access(user, type, node_id):
+def validate_access(user, accessType, node_id):
     def _validate_access(tx):
         return tx.run("MATCH (user:Person {email: {uemail}}) "
                         "MATCH (target) WHERE id(target) = {id} "
-                        "MATCH p = (user)-[:PERMISSION]->(target) "
+                        "MATCH p = (user)-[:OWNS|MEMBER|PERMISSION*]->(target) "
                         "WHERE all(rel in relationships(p) WHERE rel.level IS NULL OR rel.level >= {level}) "
-                        "RETURN target", uemail=user, id=int(node_id), level=type)
+                        "RETURN target", uemail=user, id=int(node_id), level=int(accessType))
     with graphDb.session() as session:
         nodes = session.read_transaction(_validate_access).graph().nodes
         target_node = None
@@ -74,7 +74,7 @@ def add_permission(entity_id, user_email, permission):
         tx.run("MATCH (user:Person {email: {uemail}}) "
                 "MATCH (entity) WHERE id(entity) = {id} "
                 "CREATE (user)-[:PERMISSION {level: {permission}}]->(entity) ", 
-                uemail=user_email, id=int(entity_id), permission=permission)
+                uemail=user_email, id=int(entity_id), permission=int(permission))
     with graphDb.session() as session:
         session.write_transaction(_add_permission)
 
@@ -83,7 +83,7 @@ def add_permission_group(entity_id, group_id, permission):
         tx.run("MATCH (group:Group) WHERE id(group) = {groupId} "
                 "MATCH (entity) WHERE id(entity) = {id} "
                 "CREATE (group)-[:PERMISSION {level: {permission}}]->(entity) ", 
-                groupId=int(group_id), id=int(entity_id), permission=permission)
+                groupId=int(group_id), id=int(entity_id), permission=int(permission))
     with graphDb.session() as session:
         session.write_transaction(_add_permission)
 
@@ -147,11 +147,18 @@ def get_entity_path(entityId):
                 for node in a["nodes(p)"]:
                     if "Folder" in node.labels:
                         folders.append(node['name'])
-        folders.reverse()
         return origin + ":/" + "/".join(folders)
             
-
-
+def move_to_folder(entity_id, folder_id, permission):
+    def _move_to_folder(tx):
+        return tx.run("MATCH (entity) WHERE id(entity) = {id_entity} "
+                        "MATCH (folder:Folder) WHERE id(folder) = {id_folder} "
+                        "OPTIONAL MATCH (:Folder)-[parentrel:PERMISSION]->(entity) "
+                        "DELETE parentrel "
+                        "CREATE (folder)-[:PERMISSION {level: {permission}}]->(entity)", 
+                        id_entity=int(entity_id), id_folder=int(folder_id), permission=int(permission))
+    with graphDb.session() as session:
+        return session.read_transaction(_move_to_folder)
 
 # MARK: Groups
 

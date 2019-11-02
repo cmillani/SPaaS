@@ -47,13 +47,28 @@ def share_entity(id):
 @app.route('/api/entities/<id>/path/', methods=['PATCH'])
 @login_required
 def move_entity(id):
-    abort(500)
+    data = request.get_json(force=True)
+    if str(data["entity"]["id"]) != id:
+        abort(400)
+    else:
+        folder_id = data["folderId"]
+        folder = validate_access(g.user["email"], OPERATION_WRITE, folder_id)
+        node = validate_ownership(g.user["email"], id)
+        if folder is not None and node is not None:
+            move_to_folder(id, folder_id, data["permission"])
+            return "Ok"
+        else:
+            abort(404)
 
 @app.route('/api/entities/<id>/path/', methods=['GET'])
 @login_required
 def entity_path(id):
-    validate_access(g.user["email"], OPERATION_READ, id)
-    return json.dumps({"path": get_entity_path(id)})
+    node = validate_access(g.user["email"], OPERATION_READ, id)
+    if node is not None:
+        return json.dumps({"path": get_entity_path(id)})
+    else:
+        abort(404)
+    
 
 @app.route('/api/groups/<id>/accesslist/', methods=['POST'])
 @login_required
