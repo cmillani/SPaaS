@@ -32,13 +32,13 @@ def list_user_nodes(user, data_type):
     with graphDb.session() as session:
         return session.read_transaction(_list_nodes).graph().nodes
 
-def validate_access(user, type, node_id):
+def validate_access(user, accessType, node_id):
     def _validate_access(tx):
         return tx.run("MATCH (user:Person {email: {uemail}}) "
                         "MATCH (target) WHERE id(target) = {id} "
                         "MATCH p = (user)-[:OWNS|MEMBER|PERMISSION*]->(target) "
                         "WHERE all(rel in relationships(p) WHERE rel.level IS NULL OR rel.level >= {level}) "
-                        "RETURN target", uemail=user, id=int(node_id), level=type)
+                        "RETURN target", uemail=user, id=int(node_id), level=int(accessType))
     with graphDb.session() as session:
         nodes = session.read_transaction(_validate_access).graph().nodes
         target_node = None
@@ -74,10 +74,41 @@ def add_permission(entity_id, user_email, permission):
         tx.run("MATCH (user:Person {email: {uemail}}) "
                 "MATCH (entity) WHERE id(entity) = {id} "
                 "CREATE (user)-[:PERMISSION {level: {permission}}]->(entity) ", 
-                uemail=user_email, id=int(entity_id), permission=permission)
+                uemail=user_email, id=int(entity_id), permission=int(permission))
     with graphDb.session() as session:
         session.write_transaction(_add_permission)
 
+def add_permission_group(entity_id, group_id, permission):
+    def _add_permission(tx):
+        tx.run("MATCH (group:Group) WHERE id(group) = {groupId} "
+                "MATCH (entity) WHERE id(entity) = {id} "
+                "CREATE (group)-[:PERMISSION {level: {permission}}]->(entity) ", 
+                groupId=int(group_id), id=int(entity_id), permission=int(permission))
+    with graphDb.session() as session:
+        session.write_transaction(_add_permission)
+
+def validate_membership(email, groupId):
+    def _validate_membership(tx):
+        return tx.run("MATCH (user:Person {email: {uemail}}) "
+                        "MATCH (target) WHERE id(target) = {id} "
+                        "MATCH p = (user)-[:MEMBER]->(target) "
+                        "RETURN p", uemail=email, id=int(groupId))
+    with graphDb.session() as session:
+        nodes = session.read_transaction(_validate_membership).graph().nodes
+        target_node = None
+        for node in nodes:
+            target_node = node
+            break
+        return target_node
+
+def add_member(email, groupId):
+    def _add_member(tx):
+        tx.run("MATCH (user:Person {email: {uemail}}) "
+                "MATCH (group:Group) WHERE id(group) = {groupId} "
+                "CREATE (user)-[:MEMBER]->(group) ", 
+                uemail=email, groupId=int(groupId))
+    with graphDb.session() as session:
+        session.write_transaction(_add_member)
 
 # MARK: Folders
 
@@ -85,8 +116,7 @@ def create_folder_node(folder_name, user_email):
     def _create_folder(tx):
         tx.run("MATCH (user:Person {email: {uemail}}) "
                 "CREATE (folder:Folder {name: {fname}})"
-                "CREATE (user)-[:OWNS]->(folder) "
-                "CREATE (user)-[:MEMBER]->(folder) ", 
+                "CREATE (user)-[:OWNS]->(folder) ", 
                 uemail=user_email, fname=folder_name)
     with graphDb.session() as session:
         session.write_transaction(_create_folder)
@@ -94,10 +124,41 @@ def create_folder_node(folder_name, user_email):
 def get_folders(user_email):
     def _create_folder(tx):
         return tx.run("MATCH (user:Person {email: {uemail}}) "
-                        "MATCH (user)-[:MEMBER*]->(folder:Folder) "
+                        "MATCH (user)-[:OWNS|PERMISSION*]->(folder:Folder) "
                         "RETURN folder ", uemail=user_email)
     with graphDb.session() as session:
         return session.read_transaction(_create_folder).graph().nodes
+
+def get_entity_path(entityId):
+    def _get_entity_path(tx):
+        return tx.run("MATCH (owner:Person)-[:OWNS]->(entity) where id(entity) = {id} "
+                        "OPTIONAL MATCH (parent:Folder)-[:PERMISSION]->(entity) "
+                        "OPTIONAL MATCH p = (owner)-[:OWNS|PERMISSION*]->(parent) "
+                        "RETURN nodes(p), owner "
+                        "ORDER BY length(p) DESC "
+                        "LIMIT 1 ", id=int(entityId))
+    with graphDb.session() as session:
+        result = session.read_transaction(_get_entity_path)
+        origin = ""
+        folders = []
+        for a in result:
+            origin = a["owner"]["email"]
+            if a["nodes(p)"] is not None:
+                for node in a["nodes(p)"]:
+                    if "Folder" in node.labels:
+                        folders.append(node['name'])
+        return origin + ":/" + "/".join(folders)
+            
+def move_to_folder(entity_id, folder_id, permission):
+    def _move_to_folder(tx):
+        return tx.run("MATCH (entity) WHERE id(entity) = {id_entity} "
+                        "MATCH (folder:Folder) WHERE id(folder) = {id_folder} "
+                        "OPTIONAL MATCH (:Folder)-[parentrel:PERMISSION]->(entity) "
+                        "DELETE parentrel "
+                        "CREATE (folder)-[:PERMISSION {level: {permission}}]->(entity)", 
+                        id_entity=int(entity_id), id_folder=int(folder_id), permission=int(permission))
+    with graphDb.session() as session:
+        return session.read_transaction(_move_to_folder)
 
 # MARK: Groups
 

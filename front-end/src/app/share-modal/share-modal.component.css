@@ -1,0 +1,9 @@
+/deep/.mat-tab-label, /deep/.mat-tab-label-active{
+  min-width: 50px!important;
+  padding: 3px!important;
+  margin: 3px!important;
+ }
+
+ .modalBody {
+   margin: 15px;
+ }

@@ -32,6 +32,10 @@ const FOLDERS_ENDPOINT = environment.foldersEndpoints;
 const GROUPS_ENDPOINT = environment.groupsEndpoints;
 
 const SHARE_ENDPOINT = environment.shareEndpoint;
+const GET_PATH_ENDPOINT = environment.getPathEndpoint;
+const MOVE_FOLDER_ENDPOINT = environment.moveFolderEndpoint;
+
+const ADD_GROUP_MEMBER_ENDPOINT = environment.addGroupMemberEndpoint;
 
 @Injectable()
 export class SpassService {
@@ -219,10 +223,46 @@ export class SpassService {
 
   // MARK: - Sharing
 
-  share(sharingData: object, email: string, permission: string): Observable<Response> {
+  movePath(data: any, folderId: number, permission: string): Observable<Response> {
     let headers: Headers = this.createHeaders()
     return this.http
-    .post(API_URL + SHARE_ENDPOINT, {email: email, entity: sharingData, permission: permission}, { headers: headers })
+    .patch(API_URL + MOVE_FOLDER_ENDPOINT(data.id), {folderId: folderId, entity: data, permission: permission}, { headers: headers })
+    .map(response => {
+      return response;
+    }).pipe(catchError(this.handleError));
+  }
+
+  getPath(data: any): Observable<string> {
+    let headers: Headers = this.createHeaders()
+    return this.http
+    .get(API_URL + GET_PATH_ENDPOINT(data.id), { headers: headers })
+    .map(response => {
+      return response.json().path;
+    }).pipe(catchError(this.handleError));
+  }
+
+  shareWithGroup(sharingData: any, groupId: number, permission: string): Observable<Response> {
+    let headers: Headers = this.createHeaders()
+    return this.http
+    .post(API_URL + SHARE_ENDPOINT(sharingData.id), {groupId: groupId, entity: sharingData, permission: permission}, { headers: headers })
+    .map(response => {
+      return response;
+    }).pipe(catchError(this.handleError));
+  }
+
+  share(sharingData: any, email: string, permission: string): Observable<Response> {
+    let headers: Headers = this.createHeaders()
+    return this.http
+    .post(API_URL + SHARE_ENDPOINT(sharingData.id), {email: email, entity: sharingData, permission: permission}, { headers: headers })
+    .map(response => {
+      return response;
+    }).pipe(catchError(this.handleError));
+  }
+
+  addGroupMember(group: any, member: string): Observable<Response> {
+    let headers: Headers = this.createHeaders()
+    return this.http
+    .post(API_URL + ADD_GROUP_MEMBER_ENDPOINT(group.id), {email: member, group: group}, { headers: headers })
     .map(response => {
       return response;
     }).pipe(catchError(this.handleError));
@@ -250,7 +290,6 @@ export class SpassService {
 
   listFolders(): Observable<object> {
     let headers: Headers = this.createHeaders()
-    console.log(headers)
     return this.http
     .get(API_URL + FOLDERS_ENDPOINT, { headers: headers })
     .map(response => {
@@ -280,7 +319,6 @@ export class SpassService {
 
   listGroups(): Observable<object> {
     let headers: Headers = this.createHeaders()
-    console.log(headers)
     return this.http
     .get(API_URL + GROUPS_ENDPOINT, { headers: headers })
     .map(response => {

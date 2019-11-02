@@ -39,7 +39,7 @@
                   <td scope="row">{{ name.name }}</td>
                   <td class="actionColumn">
                     <button class="btn btn-primary dangerButton actionButton" (click)="deleteGroup(name)"><mat-icon>delete_forever</mat-icon></button>
-                    <app-sharemodal [sharingData]="name"></app-sharemodal>
+                    <app-sharemodal [sharingData]="name" [isGroup]="true"></app-sharemodal>
                   </td>
                 </tr>
               </tbody>

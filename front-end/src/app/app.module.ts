@@ -5,7 +5,7 @@ import { HttpModule } from '@angular/http';
 import { HttpClientModule } from '@angular/common/http';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatRadioModule, MatIconModule, MatDividerModule } from '@angular/material';
+import { MatRadioModule, MatIconModule, MatDividerModule, MatTabsModule } from '@angular/material';
 
 import { AppComponent } from './app.component';
 import { DefinitionComponent } from './definition/definition.component';
@@ -53,6 +53,7 @@ export function loadConfig(oidcConfigService: OidcConfigService) {
     FoldersManagementComponent
   ],
   imports: [
+    MatTabsModule,
     MatDividerModule,
     MatRadioModule,
     MatIconModule,
