@@ -20,10 +20,6 @@ export class DataManagementComponent implements OnInit {
   constructor(private apiService: SpassService, private router: Router) { }
 
   ngOnInit() {
-    this.loggedMail = localStorage.getItem('loggedMail');
-    if (!this.loggedMail) {
-      this.router.navigate(['/', 'login']);
-    }
     this.fileToUpload = null;
     this.loadFiles();
   }

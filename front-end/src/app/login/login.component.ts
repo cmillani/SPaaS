@@ -26,7 +26,6 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
 
     this.oidcSecurityService.getIsAuthorized().subscribe(auth => {
-      console.log(auth)
       this.isAuthenticated = auth;
     });
 

@@ -22,9 +22,6 @@ export class TasksManagementComponent implements OnInit {
   ngOnInit() {
     this.selectedParameters = {};
     this.loggedMail = localStorage.getItem('loggedMail');
-    if (!this.loggedMail) {
-      this.router.navigate(['/', 'login']);
-    }
 
     this.apiService.getBlobFiles().subscribe(response => {
       this.dataNames = response;

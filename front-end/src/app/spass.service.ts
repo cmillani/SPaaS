@@ -214,9 +214,9 @@ export class SpassService {
   handleError(response: any) {
     switch (response.status) {
         case 401:
-          Swal.fire("Invalid Permissions", "You do not have enought permissions", "error");
+          // Swal.fire("Invalid Permissions", "You do not have enought permissions", "error");
         default:
-          Swal.fire("Server error", "Something went wrong", "error");
+          // Swal.fire("Server error", "Something went wrong", "error");
     }
     return throwError(response);
   }

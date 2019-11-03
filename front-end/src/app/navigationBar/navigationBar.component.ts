@@ -15,15 +15,6 @@ export class NavigationBarComponent implements OnInit {
 
     ngOnInit() {
         this.loggedMail = localStorage.getItem('loggedMail');
-        if (!this.loggedMail) {
-            this.router.navigate(['/', 'login']);
-        }
-
-        this.oidcSecurityService.getIsAuthorized().subscribe(auth => {
-            if (auth == false) {
-                this.router.navigate(['/', 'login']);
-            }
-        });
     }
 
     logout() {
