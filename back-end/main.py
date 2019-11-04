@@ -42,7 +42,7 @@ def share_entity(id):
             else:
                 abort(400)
         else:
-            abort(404)
+            abort(403)
 
 @app.route('/api/entities/<id>/path/', methods=['PATCH'])
 @login_required
@@ -58,7 +58,7 @@ def move_entity(id):
             move_to_folder(id, folder_id, data["permission"])
             return "Ok"
         else:
-            abort(404)
+            abort(403)
 
 @app.route('/api/entities/<id>/path/', methods=['GET'])
 @login_required
@@ -67,7 +67,7 @@ def entity_path(id):
     if node is not None:
         return json.dumps({"path": get_entity_path(id)})
     else:
-        abort(404)
+        abort(403)
     
 
 @app.route('/api/groups/<id>/accesslist/', methods=['POST'])
@@ -84,7 +84,7 @@ def share_group(id):
                 add_member(data["email"], data["group"]["id"])
             return Response()
         else:
-            abort(404)
+            abort(403)
 
 if __name__ == "__main__":
     app.run('0.0.0.0', 5000)

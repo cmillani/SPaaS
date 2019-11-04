@@ -16,7 +16,7 @@ def get_parameters(id):
         result = db_client.toolsCollection.find_one({'_id': ObjectId(node['mongoid'])})
         return Response(dumps(result["args"]), status=200)
     else:
-        abort(401)
+        abort(403)
 
 @app.route('/api/tools/', methods=['GET'])
 @login_required
@@ -33,7 +33,7 @@ def get_tool_blob(id):
     if node is not None:
         return Response(blobMechanism.download_blob('seismic-tools', node["blob"]))
     else:
-        abort(401)
+        abort(403)
 
 @app.route('/api/tools/', methods=['POST'])
 @login_required
@@ -84,4 +84,4 @@ def delete_tool(id):
         delete_entity_and_paths(id)
         return 'Deleted'
     else:
-        abort(401)
+        abort(403)

@@ -18,7 +18,8 @@
             "polyfills": "src/polyfills.ts",
             "assets": [
               "src/assets",
-              "src/favicon.ico"
+              "src/favicon.ico",
+              "src/silent-renew.html"
             ],
             "styles": [
               "src/styles.css"
@@ -84,7 +85,8 @@
             ],
             "assets": [
               "src/assets",
-              "src/favicon.ico"
+              "src/favicon.ico",
+              "silent-renew.html"
             ]
           }
         },
