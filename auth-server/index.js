@@ -30,11 +30,23 @@ const configuration = {
     request: true,
     revocation: true,
     sessionManagement: true,
+  },
+  ttl: { 
+    AccessToken: 3600,
+    AuthorizationCode: 600,
+    ClientCredentials: 600,
+    DeviceCode: 600,
+    IdToken: 3600,
+    RefreshToken: 1209600 
   }
 };
 const clients = [{
   client_id: 'spaas',
-  redirect_uris: ['http://localhost:4200', 'http://localhost:4200/toolsmanager', 'http://localhost:4200/login'],
+  redirect_uris: [
+    'http://localhost:4200',
+    'http://localhost:4200/toolsmanager', 
+    'http://localhost:4200/silent-renew.html',
+    'http://localhost:4200/login'],
   post_logout_redirect_uris: ['http://localhost:4200', 'http://localhost:4200/login'],
   response_types: ['code'],
   grant_types: ['authorization_code'],

@@ -213,10 +213,17 @@ export class SpassService {
 
   handleError(response: any) {
     switch (response.status) {
-        case 401:
+        case 403:
           Swal.fire("Invalid Permissions", "You do not have enought permissions", "error");
-        default:
+          break;
+        case 400:
+        case 500:
           Swal.fire("Server error", "Something went wrong", "error");
+          break;
+        case 401:
+          break;
+        default:
+          break;
     }
     return throwError(response);
   }

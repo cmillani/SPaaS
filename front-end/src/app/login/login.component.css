@@ -17,3 +17,21 @@
 .custom-forms {
     width: 500%;
 }
+
+.centeredDiv {
+    margin: 0 auto;
+}
+
+h2 {
+  color: white;
+}
+
+.loginView {
+    text-align: center;
+    display: table;
+    margin: 35px auto;
+    padding: 35px;
+    background-color:#57616b;
+    border-radius: 10px;
+    white-space: nowrap;
+}

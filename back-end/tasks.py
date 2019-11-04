@@ -17,7 +17,7 @@ def submit_task():
         submit_celery.delay(tool_node["blob"], data_node["blob"], data['args'], g.user["email"])
         return "SUCCESS"
     else:
-        abort(401)
+        abort(403)
 
 @app.route("/api/results/", methods=['GET'])
 @login_required
@@ -40,7 +40,7 @@ def get_job_result_file(id):
     if node is not None:
         return Response(blobMechanism.download_blob('seismic-results', node["blob"]))
     else:
-        abort(401)
+        abort(403)
 
 @app.route("/api/results/<id>/", methods=['DELETE'])
 @login_required
@@ -52,7 +52,7 @@ def delete_result(id):
         delete_entity_and_paths(id)
         return "Ok"
     else:
-        abort(401)
+        abort(403)
 
 @app.route("/api/results/<id>/", methods=['GET'])
 @login_required
@@ -62,4 +62,4 @@ def get_job_result(id):
         result = db_client.resultsCollection.find_one({'_id': ObjectId(node['mongoid'])})
         return Response(dumps(result))
     else:
-        abort(401)
+        abort(403)

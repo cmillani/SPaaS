@@ -31,4 +31,4 @@ def delete_folder(id):
         delete_entity_and_paths(id)
         return 'Deleted'
     else:
-        abort(401)
+        abort(403)

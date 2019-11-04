@@ -27,7 +27,7 @@ def get_data_id(id):
     if node is not None:
         return Response(blobMechanism.download_blob('seismic-data', node["blob"]))
     else:
-        abort(401)
+        abort(403)
 
 @app.route('/api/data/', methods=['GET'])
 @login_required
@@ -46,5 +46,5 @@ def delete_data(id):
         delete_entity_and_paths(id)
         return 'Deleted'
     else:
-        abort(401)
+        abort(403)
     
