@@ -87,15 +87,15 @@ export class AppModule {
         this.oidcConfigService.onConfigurationLoaded.subscribe((configResult: ConfigResult) => {
           const config: OpenIdConfiguration = {
             stsServer: configResult.customConfig.stsServer,
-            redirect_url: 'http://localhost:4200/login',
+            redirect_url: environment.frontend + '/login',
             client_id: 'spaas',
-            post_logout_redirect_uri: 'http://localhost:4200',
+            post_logout_redirect_uri: environment.frontend,
             start_checksession: true,
             post_login_route: "/toolsmanager",
             scope: 'openid profile email',
             response_type: 'code',
             silent_renew: true,
-            silent_renew_url: 'http://localhost:4200/silent-renew.html',
+            silent_renew_url: environment.frontend + '/silent-renew.html',
             log_console_debug_active: !environment.production,
             forbidden_route: "/forbidden",
             unauthorized_route: "/unauthorized",

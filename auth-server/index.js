@@ -54,7 +54,7 @@ const clients = [{
   grant_types: ['authorization_code'],
   token_endpoint_auth_method: 'none'
 }];
- 
+
 const oidc = new Provider(process.env.EXPOSED_AUTHAPI_ENDPOINT, configuration);
  
 let server;

@@ -1,6 +1,8 @@
 export const environment = {
   production: true,
 
+  frontend: 'http://localhost',
+
   authApiPath: 'http://localhost:3000',
 
   apiUrl: 'http://localhost:5000',

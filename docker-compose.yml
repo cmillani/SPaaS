@@ -47,6 +47,7 @@ services:
       - FRONT_ENDPOINT
 
   backend:
+    hostname: backend
     build:
       context: ./back-end
       dockerfile: Dockerfile
