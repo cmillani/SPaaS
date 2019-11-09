@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+
+  authserver:
+
+  backend:
+
+  frontend:
+    build:
+      dockerfile: Dockerfile
+    environment:
+      - configuration=production

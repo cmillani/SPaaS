@@ -43,18 +43,19 @@ const configuration = {
 const clients = [{
   client_id: 'spaas',
   redirect_uris: [
-    'http://localhost:4200',
-    'http://localhost:4200/toolsmanager', 
-    'http://localhost:4200/silent-renew.html',
-    'http://localhost:4200/login'],
-  post_logout_redirect_uris: ['http://localhost:4200', 'http://localhost:4200/login'],
+    process.env.FRONT_ENDPOINT,
+    process.env.FRONT_ENDPOINT + '/toolsmanager', 
+    process.env.FRONT_ENDPOINT + '/silent-renew.html',
+    process.env.FRONT_ENDPOINT + '/login'],
+  post_logout_redirect_uris: [
+    process.env.FRONT_ENDPOINT, 
+    process.env.FRONT_ENDPOINT + '/login'],
   response_types: ['code'],
   grant_types: ['authorization_code'],
   token_endpoint_auth_method: 'none'
-  // + other client properties
 }];
  
-const oidc = new Provider('http://localhost:3000', configuration);
+const oidc = new Provider(process.env.EXPOSED_AUTHAPI_ENDPOINT, configuration);
  
 let server;
 (async () => {

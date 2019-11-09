@@ -8,9 +8,6 @@ services:
       - NEO4J_AUTH=none
     volumes:
       - neo4j:/data
-    ports:
-      - "7474:7474"
-      - "7687:7687"
 
   minio:
     image: minio/minio
@@ -21,8 +18,6 @@ services:
       - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
     volumes:
       - minio:/data
-    ports:
-      - "9000:9000"
 
   mongo:
     image: mongo
@@ -32,58 +27,75 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
       - MONGO_INITDB_DATABASE=spassDatabase
-    ports:
-      - "27017:27017"
 
   redis:
     image: redis
     hostname: redis
-    ports:
-      - "6379:6379"
 
   authserver:
+    hostname: authserver
     build: 
       context: ./auth-server
       dockerfile: Dockerfile
     depends_on:
         - redis
         - mongo
-    ports:
-      - "3000:3000"
     environment:
       - SPASS_CONNECTION_STRING=mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo:27017/?ssl=false
       - SPASS_CELERY_BROKER=redis://redis
+      - EXPOSED_AUTHAPI_ENDPOINT
+      - FRONT_ENDPOINT
 
-  # backend:
-  #   build:
-  #     context: ./back-end
-  #     dockerfile: Dockerfile
-  #   depends_on:
-  #     - redis
-  #     - mongo
-  #     - minio
-  #     - authserver
-  #   environment:
-  #     - GRAPHDB_CONNECTION_STRING=bolt://neo4j:7687
-  #     - SPASS_CELERY_BROKER=redis://redis
-  #     - SPASS_CONNECTION_STRING=mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo:27017/?ssl=false
-  #     - BLOB_MECHANISM
-  #     - AUTHAPI_ENDPOINT=http://localhost:3000
-  #     - MINIO_ENDPOINT=minio:9000
-  #     - MINIO_SECRET_KEY
-  #     - MINIO_ACCESS_KEY
-  #   ports:
-  #     - "5000:5000"
+  backend:
+    build:
+      context: ./back-end
+      dockerfile: Dockerfile
+    command: ["python3", "main.py"] 
+    depends_on:
+      - neo4j
+      - redis
+      - mongo
+      - minio
+      - authserver
+    environment:
+      - GRAPHDB_CONNECTION_STRING=bolt://neo4j:7687
+      - SPASS_CELERY_BROKER=redis://redis
+      - SPASS_CONNECTION_STRING=mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo:27017/?ssl=false
+      - BLOB_MECHANISM
+      - AUTHAPI_ENDPOINT=http://authserver:3000
+      - MINIO_ENDPOINT=minio:9000
+      - MINIO_SECRET_KEY
+      - MINIO_ACCESS_KEY
 
-  # frontend:
-  #   build:
-  #     context: ./front-end
-  #     dockerfile: Dockerfile-Dev
-  #   depends_on:
-  #     # - backend
-  #     - authserver
-  #   ports:
-  #     - "4200:4200"
+  worker:
+    build:
+      context: ./back-end
+      dockerfile: Dockerfile
+    command: [celery, worker, -A, main.celery, -l, info]
+    depends_on:
+      - neo4j
+      - redis
+      - mongo
+      - minio
+      - authserver
+    environment:
+      - GRAPHDB_CONNECTION_STRING=bolt://neo4j:7687
+      - SPASS_CELERY_BROKER=redis://redis
+      - SPASS_CONNECTION_STRING=mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo:27017/?ssl=false
+      - BLOB_MECHANISM
+      - AUTHAPI_ENDPOINT=http://authserver:3000
+      - MINIO_ENDPOINT=minio:9000
+      - MINIO_SECRET_KEY
+      - MINIO_ACCESS_KEY
+
+  frontend:
+    build:
+      context: ./front-end
+    depends_on:
+      - worker
+      - backend
+      - authserver
+
 
 volumes:
   minio:

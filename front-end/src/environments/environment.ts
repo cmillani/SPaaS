@@ -6,6 +6,8 @@
 export const environment = {
   production: false,
 
+  authApiPath: 'http://localhost:3000',
+
   apiUrl: 'http://localhost:5000',
 
   uploadDataEndpoint: '/api/data/',

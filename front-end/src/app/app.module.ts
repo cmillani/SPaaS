@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { HttpClientModule } from '@angular/common/http';
 
+import { environment } from '../environments/environment';
+
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatRadioModule, MatIconModule, MatDividerModule, MatTabsModule } from '@angular/material';
 
@@ -32,7 +34,7 @@ import { FoldersManagementComponent } from './folders-management/folders-managem
 export function loadConfig(oidcConfigService: OidcConfigService) {
   return () =>
     oidcConfigService.load_using_stsServer(
-      'http://localhost:3000'
+      environment.authApiPath
     );
 }
 
@@ -94,7 +96,7 @@ export class AppModule {
             response_type: 'code',
             silent_renew: true,
             silent_renew_url: 'http://localhost:4200/silent-renew.html',
-            log_console_debug_active: true,
+            log_console_debug_active: !environment.production,
             forbidden_route: "/forbidden",
             unauthorized_route: "/unauthorized",
             log_console_warning_active: true,

@@ -1,6 +1,8 @@
 #!/bin/bash
 
 # MongoDB Connection URL
+export MONGO_USERNAME=
+export MONGO_PASSWORD=
 export SPASS_CONNECTION_STRING=
 # Celery Broker Connection URL
 export SPASS_CELERY_BROKER=
@@ -17,3 +19,10 @@ export MINIO_ACCESS_KEY=
 # Azure Blob Mechanism Variables
 export SPASS_DATA_BLOB_KEY=
 export SPASS_AZURE_ACCOUNT_NAME=
+
+# Neo4J Variales
+export GRAPHDB_CONNECTION_STRING=
+
+# Auth server
+export AUTHAPI_ENDPOINT=
+export EXPOSED_AUTHAPI_ENDPOINT=
