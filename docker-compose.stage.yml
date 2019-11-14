@@ -14,7 +14,7 @@ services:
     build:
       dockerfile: Dockerfile
       args:
-        - configuration=production
+        - configuration=stage
     ports:
       - "80:80"
       - "5000:5000"

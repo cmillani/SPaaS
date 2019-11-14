@@ -50,8 +50,6 @@ services:
     hostname: backend
     build:
       context: ./back-end
-      dockerfile: Dockerfile
-    command: ["python3", "main.py"] 
     depends_on:
       - neo4j
       - redis

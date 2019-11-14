@@ -6,6 +6,7 @@ const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 var cors = require('cors');
+var isProduction = process.env.ENVIRONMENT == "production";
 
 const configuration = {
   // ... see available options /docs/configuration.md
@@ -73,7 +74,7 @@ let server;
 
   expressApp.get('/interaction/:grant', async (req, res) => {
     oidc.interactionDetails(req).then((details) => {
-
+      details["isProduction"] = isProduction;
       const view = (() => {
         switch (details.interaction.reason) {
           case 'consent_prompt':
@@ -91,7 +92,7 @@ let server;
   expressApp.get('/interaction/:grant/registration', async (req, res) => {
     oidc.interactionDetails(req).then((details) => {
       console.log('see what else is available to you for interaction views', details);
-
+      details["isProduction"] = isProduction;
       res.render('registration', { details });
     });
   })

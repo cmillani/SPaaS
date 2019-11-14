@@ -1,11 +1,11 @@
 export const environment = {
-  production: true,
+  production: false,
 
-  frontend: 'http://spaas.cadumillani.com.br',
+  frontend: 'http://localhost',
 
-  authApiPath: 'http://spaas.cadumillani.com.br:3000',
+  authApiPath: 'http://localhost:3000',
 
-  apiUrl: 'http://spaas.cadumillani.com.br:5000',
+  apiUrl: 'http://localhost:5000',
 
   uploadDataEndpoint: '/api/data/',
   getFilesEndpoint: '/api/data/',
