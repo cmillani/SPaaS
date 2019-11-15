@@ -6,6 +6,7 @@ const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 var cors = require('cors');
+var isProduction = process.env.ENVIRONMENT == "production";
 
 const configuration = {
   // ... see available options /docs/configuration.md
@@ -43,22 +44,25 @@ const configuration = {
 const clients = [{
   client_id: 'spaas',
   redirect_uris: [
-    'http://localhost:4200',
-    'http://localhost:4200/toolsmanager', 
-    'http://localhost:4200/silent-renew.html',
-    'http://localhost:4200/login'],
-  post_logout_redirect_uris: ['http://localhost:4200', 'http://localhost:4200/login'],
+    process.env.FRONT_ENDPOINT,
+    process.env.FRONT_ENDPOINT + '/toolsmanager', 
+    process.env.FRONT_ENDPOINT + '/silent-renew.html',
+    process.env.FRONT_ENDPOINT + '/login'],
+  post_logout_redirect_uris: [
+    process.env.FRONT_ENDPOINT, 
+    process.env.FRONT_ENDPOINT + '/login'],
   response_types: ['code'],
   grant_types: ['authorization_code'],
   token_endpoint_auth_method: 'none'
-  // + other client properties
 }];
- 
-const oidc = new Provider('http://localhost:3000', configuration);
+
+const oidc = new Provider(process.env.EXPOSED_AUTHAPI_ENDPOINT, configuration);
  
 let server;
 (async () => {
   await oidc.initialize({ keystore, clients, adapter: redisAdapter });
+
+  oidc.proxy = true;
 
   const expressApp = express();
 
@@ -72,7 +76,7 @@ let server;
 
   expressApp.get('/interaction/:grant', async (req, res) => {
     oidc.interactionDetails(req).then((details) => {
-
+      details["isProduction"] = isProduction;
       const view = (() => {
         switch (details.interaction.reason) {
           case 'consent_prompt':
@@ -90,7 +94,7 @@ let server;
   expressApp.get('/interaction/:grant/registration', async (req, res) => {
     oidc.interactionDetails(req).then((details) => {
       console.log('see what else is available to you for interaction views', details);
-
+      details["isProduction"] = isProduction;
       res.render('registration', { details });
     });
   })
