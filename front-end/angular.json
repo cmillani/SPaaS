@@ -66,6 +66,9 @@
           "configurations": {
             "production": {
               "browserTarget": "front-end:build:production"
+            },
+            "stage": {
+              "browserTarget": "front-end:build:stage"
             }
           }
         },

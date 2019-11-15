@@ -16,6 +16,7 @@ services:
       args:
         - configuration=stage
     ports:
+      - "443:443"
       - "80:80"
       - "5000:5000"
       - "3000:3000"

@@ -1,3 +1,5 @@
 config.sh
 config.*.sh
 .DS_Store
+*.crt
+*.key

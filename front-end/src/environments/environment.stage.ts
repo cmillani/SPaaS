@@ -1,11 +1,11 @@
 export const environment = {
   production: false,
 
-  frontend: 'http://localhost',
+  frontend: 'https://localhost',
 
-  authApiPath: 'http://localhost:3000',
+  authApiPath: 'https://localhost:3000',
 
-  apiUrl: 'http://localhost:5000',
+  apiUrl: 'https://localhost:5000',
 
   uploadDataEndpoint: '/api/data/',
   getFilesEndpoint: '/api/data/',

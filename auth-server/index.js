@@ -62,6 +62,8 @@ let server;
 (async () => {
   await oidc.initialize({ keystore, clients, adapter: redisAdapter });
 
+  oidc.proxy = true;
+
   const expressApp = express();
 
   expressApp.set('trust proxy', true);
