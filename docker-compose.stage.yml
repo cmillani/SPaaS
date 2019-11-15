@@ -12,7 +12,7 @@ services:
 
   frontend:
     build:
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile-Stage
       args:
         - configuration=stage
     ports:
