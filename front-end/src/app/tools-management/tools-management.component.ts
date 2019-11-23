@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { SpassService } from '../spass.service';
 import { Router } from '@angular/router';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
+import { ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-tools-management',
@@ -14,26 +15,48 @@ export class ToolsManagementComponent implements OnInit {
   fileNames: any;
   jobParams: string;
 
+  @ViewChild('fileInput') fileInput;
+
   constructor(private apiService: SpassService, private router: Router) { }
 
   ngOnInit() {
     this.fileToUpload = null;
+    this.getTools();
+  }
+
+  getTools() {
     this.apiService.getTools().subscribe(response => {
-      this.fileNames = response.replace('[', '').replace(']', '').split('"').join('').replace(/\s/g, '').split(',');
+      this.fileNames = response;
+    });
+  }
+
+  createTool() {
+    this.apiService.uploadTool(this.fileToUpload, this.nameOfFile, this.jobParams)
+    .subscribe(response => {
+      this.getTools();
+      this.jobParams = "";
+      this.nameOfFile = "";
+      this.fileInput.nativeElement.value = "";
+      console.log(response);
     });
   }
 
   onFileChange(files: FileList) {
     this.fileToUpload = files.item(0);
-    this.apiService.uploadTool(this.fileToUpload, this.nameOfFile, this.jobParams)
+  }
+
+  downloadTool(name: any) {
+    this.apiService.downloadTool(name)
     .subscribe(response => {
+      this.getTools();
       console.log(response);
     });
   }
 
-  deleteTool(name: string) {
+  deleteTool(name: any) {
     this.apiService.deleteTool(name)
     .subscribe(response => {
+      this.getTools();
       console.log(response);
     });
   }

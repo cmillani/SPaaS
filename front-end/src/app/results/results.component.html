@@ -1,30 +1,36 @@
 <app-navigationBar></app-navigationBar>
-  <div class="pagetitle">
-      <h2>Results</h2>
-  </div>
-  
-  <app-sidemenu></app-sidemenu>
+  <div>
+  <app-sidemenu class="sideMenu"></app-sidemenu>
 
-  <div class="container">
-        <div class="custom-table">
+  <div class="pageContent">
+      <div class="pagetitle">
+          <h2>Results</h2>
+      </div>
+      <mat-divider></mat-divider>
+        <div>
+          <br>
             <table class="table table-bordered">
                 <thead>
                   <tr>
-                    <th scope="col">Id</th>
-                    <th scope="col">Link to Results</th>
-                    <th scope="col">Job Details</th>
+                    <th scope="col" class="namesColumn">Id</th>
+                    <th scope="col">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr *ngFor="let result of results">
-                    <td>{{ result.id }}</td>
-                    <td>{{ "https://seismicdata.blob.core.windows.net/seismic-results/" + result.id + ".tar.gz"}}</td>
-                    <td> <button type="button" class="btn btn-primary"  data-toggle="modal" data-target="#exampleModal" (click)="selectResult(result.id)">Details</button></td>
+                    <td>{{ result.name }}</td>
+                    <td class="actionColumn">
+                      <button class="btn btn-primary dangerButton actionButton" (click)="deleteData(result)"><mat-icon>delete_forever</mat-icon></button>
+                      <button class="btn btn-primary actionButton" (click)="downloadData(result)"><mat-icon>cloud_download</mat-icon></button>
+                      <button class="btn btn-primary actionButton"  data-toggle="modal" data-target="#exampleModal" (click)="selectResult(result)"><mat-icon>details</mat-icon></button>
+                      <app-sharemodal [sharingData]="result" class="actionButton"></app-sharemodal>
+                    </td>
                   </tr>
                 </tbody>
               </table>
-         </div>             
-    </div>
+         </div>
+  </div>
+  </div>
 
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">

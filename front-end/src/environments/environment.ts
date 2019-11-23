@@ -5,17 +5,37 @@
 
 export const environment = {
   production: false,
+
+  frontend: 'http://localhost:4200',
+
+  authApiPath: 'http://localhost:3000',
+
   apiUrl: 'http://localhost:5000',
-  createUserEndpoint: '/api/users/create/',
-  authUserEndpoint: '/api/users/authenticate/',
-  uploadDataEndpoint: '/api/data/upload/',
+
+  uploadDataEndpoint: '/api/data/',
   getFilesEndpoint: '/api/data/',
-  uploadToolsEndpoint: '/api/tools/upload/',
+  getFileEndpoint: '/api/data/',
+  deleteDataEndpoint: '/api/data/',
+
+  uploadToolsEndpoint: '/api/tools/',
   getToolsEndpoint: '/api/tools/',
   deleteToolsEnpoint: '/api/tools/',
-  deleteDataEndpoint: '/api/data/',
-  getParametersEndpoint: '/api/tasks/parameters/',
+  getParametersEndpoint: '/api/tools/',
+  getToolEnpoint: '/api/tools/',
+
   submitTaskEndpoint: '/api/tasks/submit/',
   getResultsBlobEndpoints: '/api/results/',
-  statusEndpoint: '/api/status/'
+  statusEndpoint: '/api/status/',
+  getResultBlobEndpoints: '/api/results/',
+  getResultEndpoints: '/api/results/',
+  deleteResultEndpoints: '/api/results/',
+
+  foldersEndpoints: '/api/folders/',
+  groupsEndpoints: '/api/groups/',
+
+  shareEndpoint: (id) => {return `/api/entities/${id}/accesslist/`},
+  getPathEndpoint: (id) => {return `/api/entities/${id}/path/`},
+  moveFolderEndpoint: (id) => {return `/api/entities/${id}/path/`},
+
+  addGroupMemberEndpoint: (id) => {return `/api/groups/${id}/accesslist/`}
 };

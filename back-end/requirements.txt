@@ -5,3 +5,6 @@ azure-storage
 celery
 redis
 minio
+pyjwt
+requests
+neo4j

@@ -11,8 +11,8 @@ export class TasksManagementComponent implements OnInit {
   loggedMail: string;
   dataNames: any;
   toolNames: any;
-  selectedTool: string;
-  selectedData: string;
+  selectedToolId: number;
+  selectedDataId: number;
   parameters: any;
   submissionDescription: any;
   selectedParameters: any;
@@ -22,23 +22,25 @@ export class TasksManagementComponent implements OnInit {
   ngOnInit() {
     this.selectedParameters = {};
     this.loggedMail = localStorage.getItem('loggedMail');
-    if (!this.loggedMail) {
-      this.router.navigate(['/', 'login']);
-    }
 
     this.apiService.getBlobFiles().subscribe(response => {
-      this.dataNames = response.replace('[', '').replace(']', '').split('"').join('').replace(' ', '').split(',');
+      this.dataNames = response;
+      console.log(response)
+      console.log(response[0].id)
+      this.selectedDataId = response[0].id
     });
 
     this.apiService.getTools().subscribe(response => {
-      this.toolNames = response.replace('[', '').replace(']', '').split('"').join('').replace(/\s/g, '').split(',');
+      this.toolNames = response;
+      this.selectedToolId = response[0].id
+      this.loadParameters()
     });
   }
 
   submitTask() {
     this.submissionDescription = {};
-    this.submissionDescription['tool'] = this.selectedTool;
-    this.submissionDescription['data'] = this.selectedData;
+    this.submissionDescription['tool'] = this.selectedToolId;
+    this.submissionDescription['data'] = this.selectedDataId;
     this.submissionDescription['args'] = this.selectedParameters;
     this.apiService.submitTask(this.submissionDescription).subscribe(response => {
       console.log(response);
@@ -46,9 +48,9 @@ export class TasksManagementComponent implements OnInit {
   }
 
   loadParameters() {
-    this.apiService.loadParameters(this.selectedTool)
+    this.apiService.loadParameters(this.selectedToolId)
     .subscribe(response => {
-      this.parameters = JSON.parse(response['_body']);
+      this.parameters = response;
     });
   }
 

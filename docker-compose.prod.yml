@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+
+  backend:
+    build:
+      dockerfile: Dockerfile-WSGI
+
+  authserver:
+    environment:
+      - ENVIRONMENT=production
+
+  frontend:
+    build:
+      dockerfile: Dockerfile
+      args:
+        - configuration=production
+    ports:
+      - "443:443"
+      - "80:80"
+      - "5000:5000"
+      - "3000:3000"

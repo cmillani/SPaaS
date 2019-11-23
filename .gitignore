@@ -1,1 +1,6 @@
-config.sh
+
+secrets.sh
+.DS_Store
+*.crt
+*.key
+images/

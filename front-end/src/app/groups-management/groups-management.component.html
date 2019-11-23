@@ -1,0 +1,50 @@
+<app-navigationBar></app-navigationBar>
+
+<div>
+
+<app-sidemenu class="sideMenu"></app-sidemenu>
+
+<div class="pageContent">
+    <div class="pagetitle">
+        <h2>Groups Manager</h2>
+      </div>
+      <mat-divider></mat-divider>
+    <div>
+        <br>
+      <form>
+            <div>
+              <h3>Create new group</h3>
+              <div class="form-group">
+                  <label for="codeinput">Group name</label>
+                  <div>
+                    <input  class="form-control formFieldName" name="nameOfNewGroup" [(ngModel)]="nameOfNewGroup" id="groupname" placeholder="The name you want for the group">
+                    <button class="btn btn-primary formFieldSend" (click)="createGroup()">Save!</button>
+                  </div>
+              </div>
+            </div>
+      </form>
+      <br>
+      <mat-divider></mat-divider>
+      <br>
+      <div>
+          <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th scope="col" class="namesColumn">Groups</th>
+                  <th scope="col">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let name of groups">
+                  <td scope="row">{{ name.name }}</td>
+                  <td class="actionColumn">
+                    <button class="btn btn-primary dangerButton actionButton" (click)="deleteGroup(name)"><mat-icon>delete_forever</mat-icon></button>
+                    <app-sharemodal [sharingData]="name" [isGroup]="true"></app-sharemodal>
+                  </td>
+                </tr>
+              </tbody>
+          </table>
+      </div>
+    </div>
+</div>
+</div>

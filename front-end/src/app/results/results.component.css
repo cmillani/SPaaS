@@ -1,0 +1,9 @@
+.sideMenu {
+  float: left;
+}
+
+.pageContent {
+  float: left;
+  width: calc(100% - 170px);
+  margin-right: 20px;
+}

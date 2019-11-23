@@ -1,0 +1,49 @@
+<ng-template #content let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">{{sharingData.name}}</h4>
+        <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+        <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <form></form>
+    <div class="modal-body">
+      <div class="modalBody">
+        <mat-tab-group mat-align-tabs="center" (selectedTabChange)="actionTabChanged($event)">
+          <mat-tab label="Share">
+            <p>Share {{sharingData.name}} with:</p>
+            <mat-tab-group mat-align-tabs="center" (selectedTabChange)="shareTabChanged($event)">
+              <mat-tab label="Person">
+                <input class="form-control" name="email" [(ngModel)]="email" id="email" placeholder="george@corp.com">
+              </mat-tab>
+              <mat-tab *ngIf="isGroup == false" label="Group">
+                <select class="form-control" [(ngModel)]="selectedGroupId" name="selectedGroupId">
+                  <option *ngFor="let group of groups" [value]="group.id" >{{ group.name }}</option>
+                </select>
+              </mat-tab>
+            </mat-tab-group>
+            <mat-radio-group *ngIf="isGroup == false" aria-label="Access level:" [(ngModel)]="permission"><br>
+              <mat-radio-button value="1" checked>Read</mat-radio-button><br>
+              <mat-radio-button value="10">Write</mat-radio-button>
+            </mat-radio-group>
+          </mat-tab>
+          <mat-tab *ngIf="isGroup == false" label="Move">
+            <p>Move {{sharingData.name}}</p>
+            <p>Origin: {{originFolder}}</p>
+            <p>Destination:</p>
+            <select class="form-control" [(ngModel)]="selectedFolderId" name="selectedFolderId">
+              <option *ngFor="let folder of folders" [value]="folder.id" >{{ folder.name }}</option>
+            </select>
+            <mat-radio-group aria-label="Access level:" [(ngModel)]="permission"><br>
+              <mat-radio-button value="1" checked>Read</mat-radio-button><br>
+              <mat-radio-button value="10">Write</mat-radio-button>
+            </mat-radio-group>
+          </mat-tab>
+        </mat-tab-group>
+      </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark" (click)="share()">Share</button>
+    </div>
+</ng-template>
+
+<button class="btn btn-primary actionButton" (click)="open(content)"><mat-icon>share</mat-icon></button>

@@ -18,7 +18,8 @@
             "polyfills": "src/polyfills.ts",
             "assets": [
               "src/assets",
-              "src/favicon.ico"
+              "src/favicon.ico",
+              "src/silent-renew.html"
             ],
             "styles": [
               "src/styles.css"
@@ -46,6 +47,14 @@
                   "with": "src/environments/environment.prod.ts"
                 }
               ]
+            },
+            "stage": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.stage.ts"
+                }
+              ]
             }
           }
         },
@@ -57,6 +66,9 @@
           "configurations": {
             "production": {
               "browserTarget": "front-end:build:production"
+            },
+            "stage": {
+              "browserTarget": "front-end:build:stage"
             }
           }
         },
@@ -76,14 +88,16 @@
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",
               "node_modules/bootstrap/dist/js/bootstrap.js",
-              "node_modules/popper.js/dist/umd/popper.min.js"
+              "node_modules/popper.js/dist/umd/popper.min.js",
+              "node_modules/sweetalert2/dist/sweetalert2.min.css"
             ],
             "styles": [
               "src/styles.css"
             ],
             "assets": [
               "src/assets",
-              "src/favicon.ico"
+              "src/favicon.ico",
+              "silent-renew.html"
             ]
           }
         },

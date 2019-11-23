@@ -143,6 +143,7 @@
         <a href="<%= details.returnTo %>">[ Cancel ]</a>
       </div>
     </div>
+    <% if (details.isProduction == false) { %>
     <div class="login-card">
       <div class="grant-debug">
         <%- JSON.stringify(details.interaction, null, 4) %>
@@ -151,5 +152,6 @@
         <%- JSON.stringify(details.params, null, 4) %>
       </div>
     </div>
+    <% } %>
   </body>
 </html>

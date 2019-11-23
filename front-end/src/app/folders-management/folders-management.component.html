@@ -1,0 +1,49 @@
+<app-navigationBar></app-navigationBar>
+
+<div>
+<app-sidemenu class="sideMenu"></app-sidemenu>
+
+<div class="pageContent">
+    <div class="pagetitle">
+        <h2>Folders Manager</h2>
+      </div>
+    <mat-divider></mat-divider>
+    <div>
+      <br>
+      <form>
+            <div>
+              <h3>Create new folder</h3>
+              <div class="form-group">
+                  <label for="codeinput">Folder name</label>
+                  <div>
+                    <input  class="form-control formFieldName" name="nameOfNewFolder" [(ngModel)]="nameOfNewFolder" id="groupname" placeholder="The name you want for the group">
+                    <button class="btn btn-primary formFieldSend" (click)="createFolder()">Save!</button>
+                  </div>
+              </div>
+            </div>
+      </form>
+      <br>
+      <mat-divider></mat-divider>
+      <br>
+      <div>
+          <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th scope="col" class="namesColumn">Folders</th>
+                  <th scope="col">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let name of folders">
+                  <td scope="row">{{ name.name }}</td>
+                  <td class="actionColumn">
+                    <button class="btn btn-primary dangerButton actionButton" (click)="deleteFolder(name)"><mat-icon>delete_forever</mat-icon></button>
+                    <app-sharemodal [sharingData]="name"></app-sharemodal>
+                  </td>
+                </tr>
+              </tbody>
+          </table>
+      </div>
+    </div>
+</div>
+</div>
