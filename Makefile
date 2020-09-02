@@ -22,10 +22,10 @@ images: imagesFolder
 	docker save -o ./images/spaas_backend.tar spaas_backend:latest
 
 localKeys:
-	sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout .back-end/local.key -out ./back-end/local.crt -config localhost.conf
+	sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout ./front-end/local.key -out ./front-end/local.crt -config localhost.conf
 
 serverKeys:
-	sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout ./back-end/server.key -out ./back-end/server.crt -config cadumillani.conf
+	sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout ./front-end/server.key -out ./front-end/server.crt -config cadumillani.conf
 
 deploy:
 	rsync -Cravpe ssh ./ ec2-user@spaas:/home/ec2-user/spaas/

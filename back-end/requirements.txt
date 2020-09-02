@@ -1,7 +1,6 @@
 Flask
 pymongo
 flask-cors
-azure-storage
 celery
 redis
 minio

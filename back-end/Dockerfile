@@ -1,4 +1,4 @@
-FROM python:3.5.6-jessie
+FROM python:3
 
 WORKDIR /app
 COPY . /app
