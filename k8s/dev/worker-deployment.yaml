@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose -f docker-compose.yml -f docker-compose.prod.yml convert
+    kompose.version: 1.21.0 (HEAD)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: worker
+  name: worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: worker
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose -f docker-compose.yml -f docker-compose.prod.yml convert
+        kompose.version: 1.21.0 (HEAD)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: worker
+    spec:
+      containers:
+        - args:
+            - celery
+            - worker
+            - -A
+            - main.celery
+            - -l
+            - info
+          env:
+            - name: AUTHAPI_ENDPOINT
+              value: http://authserver:3000
+            - name: GRAPHDB_CONNECTION_STRING
+              value: bolt://neo4j:7687
+            - name: MINIO_ENDPOINT
+              value: minio:9000
+            - name: SPASS_CELERY_BROKER
+              value: redis://redis
+            - name: SPASS_CONNECTION_STRING
+              value: mongodb://:@mongo:27017/?ssl=false
+          image: worker
+          name: worker
+          resources: {}
+      restartPolicy: Always
+status: {}

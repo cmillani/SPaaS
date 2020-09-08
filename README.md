@@ -9,7 +9,7 @@ Edit *tools/config.sh*, changing all connection urls and execute the command
 Also copy *tools/secrets.sh.example* and substitute the values
 
 ```sh
-source config.sh
+source tools/config.sh
 ```
 
 Generate needed keys and certificates (see makefile)
@@ -23,6 +23,30 @@ Also, make sure to generate new keys for *auth-server/keystore.json*, that can b
 The provided keys sould not ne used on a deployed instance of this sevice.
 
 # Running
+
+## Kubernetes
+**This is a WIP, and should become the default deployment method. For now it will only be a development evironment**
+With kubectl and minikube installed and running:
+
+```sh
+eval $(minikube docker-env)
+```
+This will point docker to the minikube environment
+
+```sh
+source tools/config.sh
+docker-compose build
+```
+
+Enable the repository addon if not enabled, and if using minikube start using `--insecure-registry`
+
+Then add the project images (remote images k8s can pull, so we can push only the project ones) to the k8s repository: (see [this link](https://minikube.sigs.k8s.io/docs/handbook/registry/) for more information)
+
+```sh
+docker image tag <image> localhost:5000/<image> #registry addon must be enabled and exposed, see link above
+docker push localhost:5000/<image>
+```
+
 
 ## With Docker
 

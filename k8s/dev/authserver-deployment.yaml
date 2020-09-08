@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose -f docker-compose.yml -f docker-compose.prod.yml convert
+    kompose.version: 1.21.0 (HEAD)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: authserver
+  name: authserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: authserver
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose -f docker-compose.yml -f docker-compose.prod.yml convert
+        kompose.version: 1.21.0 (HEAD)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: authserver
+    spec:
+      containers:
+        - env:
+            - name: ENVIRONMENT
+              value: production
+            - name: SPASS_CELERY_BROKER
+              value: redis://redis
+            - name: SPASS_CONNECTION_STRING
+              value: mongodb://:@mongo:27017/?ssl=false
+          image: localhost:5000/authserver
+          name: authserver
+          resources: {}
+      hostname: authserver
+      restartPolicy: Always
+status: {}
