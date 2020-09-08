@@ -25,6 +25,26 @@ spec:
     spec:
       containers:
         - env:
+            - name: MINIO_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: minio-secret-key
+                  key: MINIO_SECRET_KEY
+            - name: MINIO_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: minio-access-key
+                  key: MINIO_ACCESS_KEY
+            - name: MONGO_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-username
+                  key: MONGO_USERNAME
+            - name: MONGO_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-password
+                  key: MONGO_PASSWORD
             - name: AUTHAPI_ENDPOINT
               value: http://authserver:3000
             - name: GRAPHDB_CONNECTION_STRING
@@ -34,10 +54,13 @@ spec:
             - name: SPASS_CELERY_BROKER
               value: redis://redis
             - name: SPASS_CONNECTION_STRING
-              value: mongodb://:@mongo:27017/?ssl=false
+              value: mongodb://$(MONGO_USERNAME):$(MONGO_PASSWORD)@mongo:27017/?ssl=false
+            - name: BLOB_MECHANISM
+              value: minio
           image: localhost:5000/backend
           name: backend
           resources: {}
+          imagePullPolicy: IfNotPresent
       hostname: backend
       restartPolicy: Always
 status: {}

@@ -32,5 +32,6 @@ spec:
             - containerPort: 5000
             - containerPort: 3000
           resources: {}
+          imagePullPolicy: IfNotPresent
       restartPolicy: Always
 status: {}
