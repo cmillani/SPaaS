@@ -2,15 +2,21 @@ version: '3'
 
 services:
 
+  worker:
+    image: localhost:5000/worker
+
   backend:
+    image: localhost:5000/backend
     build:
       dockerfile: Dockerfile-WSGI
 
   authserver:
+    image: localhost:5000/authserver
     environment:
       - ENVIRONMENT=production
 
   frontend:
+    image: localhost:5000/frontend
     build:
       dockerfile: Dockerfile-Stage
       args:

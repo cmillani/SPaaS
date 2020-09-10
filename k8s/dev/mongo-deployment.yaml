@@ -13,7 +13,8 @@ spec:
   selector:
     matchLabels:
       io.kompose.service: mongo
-  strategy: {}
+  strategy: 
+    type: Recreate
   template:
     metadata:
       annotations:
@@ -40,6 +41,13 @@ spec:
           image: mongo
           name: mongo
           resources: {}
+          volumeMounts:
+            - mountPath: /data/db
+              name: mongo
       hostname: mongo
       restartPolicy: Always
+      volumes:
+        - name: mongo
+          persistentVolumeClaim:
+            claimName: mongo
 status: {}

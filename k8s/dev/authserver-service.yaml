@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose -f docker-compose.yml -f docker-compose.prod.yml convert
+    kompose.version: 1.21.0 (HEAD)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: authserver
+  name: authserver
+spec:
+  ports:
+    - port: 9000
+  selector:
+    io.kompose.service: authserver

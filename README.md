@@ -38,6 +38,9 @@ source tools/config.sh
 docker-compose build
 ```
 
+The process described above may fail (VM may not have enough memory to run NPM, for instance), and also requires setting  `PullPolicy` to `Never`.
+Another option is to use a locl repository, as described bellow.
+
 Enable the repository addon if not enabled, and if using minikube start using `--insecure-registry`
 
 Then add the project images (remote images k8s can pull, so we can push only the project ones) to the k8s repository: (see [this link](https://minikube.sigs.k8s.io/docs/handbook/registry/) for more information)
@@ -47,6 +50,10 @@ docker image tag <image> localhost:5000/<image> #registry addon must be enabled 
 docker push localhost:5000/<image>
 ```
 
+This requires setting image on `deployments` to `localhost:5000/<image>`.
+
+### Setting up secrets
+After sourcing the `config` files, simply run `tools/exportSecrets.sh`, that will create the needed secrets on kubernetes to run the application.
 
 ## With Docker
 

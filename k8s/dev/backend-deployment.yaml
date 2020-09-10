@@ -24,7 +24,10 @@ spec:
         io.kompose.service: backend
     spec:
       containers:
-        - env:
+        - args:
+            - python3
+            - main.py
+          env:
             - name: MINIO_SECRET_KEY
               valueFrom:
                 secretKeyRef:
@@ -60,7 +63,6 @@ spec:
           image: localhost:5000/backend
           name: backend
           resources: {}
-          imagePullPolicy: IfNotPresent
       hostname: backend
       restartPolicy: Always
 status: {}

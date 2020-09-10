@@ -27,6 +27,13 @@ spec:
         - image: redis
           name: redis
           resources: {}
+          volumeMounts:
+            - mountPath: /data
+              name: redis
       hostname: redis
       restartPolicy: Always
+      volumes:
+        - name: redis
+          persistentVolumeClaim:
+            claimName: redis
 status: {}
