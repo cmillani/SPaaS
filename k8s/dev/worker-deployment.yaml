@@ -62,9 +62,10 @@ spec:
               value: redis://redis
             - name: SPASS_CONNECTION_STRING
               value: mongodb://$(MONGO_USERNAME):$(MONGO_PASSWORD)@mongo:27017/?ssl=false
+            - name: BLOB_MECHANISM
+              value: minio
           image: localhost:5000/worker
           name: worker
           resources: {}
-          imagePullPolicy: IfNotPresent
       restartPolicy: Always
 status: {}

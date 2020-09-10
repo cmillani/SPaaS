@@ -48,7 +48,6 @@ spec:
           image: localhost:5000/authserver
           name: authserver
           resources: {}
-          imagePullPolicy: IfNotPresent
       hostname: authserver
       restartPolicy: Always
 status: {}
