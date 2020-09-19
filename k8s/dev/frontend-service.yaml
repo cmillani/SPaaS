@@ -11,18 +11,20 @@ metadata:
 spec:
   type: NodePort
   ports:
-    - name: "443"
+    - name: "https-front"
       port: 443
       targetPort: 443
-    - name: "80"
+    - name: "http-front"
       port: 80
       targetPort: 80
-    - name: "5000"
+    - name: "backend"
       port: 5000
       targetPort: 5000
-    - name: "3000"
+    - name: "authserver"
       port: 3000
       targetPort: 3000
+  externalIPs:
+    - 192.168.39.108 #this should match minikube IP
   selector:
     io.kompose.service: frontend
 status:

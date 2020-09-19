@@ -29,11 +29,6 @@ The provided keys sould not ne used on a deployed instance of this sevice.
 With kubectl and minikube installed and running:
 
 ```sh
-eval $(minikube docker-env)
-```
-This will point docker to the minikube environment
-
-```sh
 source tools/config.sh
 docker-compose build
 ```
@@ -53,7 +48,8 @@ docker push localhost:5000/<image>
 This requires setting image on `deployments` to `localhost:5000/<image>`.
 
 ### Setting up secrets
-After sourcing the `config` files, simply run `tools/exportSecrets.sh`, that will create the needed secrets on kubernetes to run the application.
+Create the `.env` files from the provided `.env.sample` on `k8s/dev`, and run `make localKubeKeys`.
+Then, simply run `kubectl apply -k k8s/dev`
 
 ## With Docker
 

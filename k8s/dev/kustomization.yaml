@@ -1,0 +1,12 @@
+generatorOptions:
+  disableNameSuffixHash: true
+secretGenerator:
+- name: spaas-minio
+  env: spaas.minio.env
+- name: spaas-mongo
+  env: spaas.mongo.env
+- name: spaas-ssl
+  type: kubernetes.io/tls
+  files:
+  - tls.key
+  - tls.crt

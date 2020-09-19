@@ -35,22 +35,22 @@ spec:
             - name: MINIO_SECRET_KEY
               valueFrom:
                 secretKeyRef:
-                  name: minio-secret-key
+                  name: spaas-minio
                   key: MINIO_SECRET_KEY
             - name: MINIO_ACCESS_KEY
               valueFrom:
                 secretKeyRef:
-                  name: minio-access-key
+                  name: spaas-minio
                   key: MINIO_ACCESS_KEY
             - name: MONGO_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: mongo-username
+                  name: spaas-mongo
                   key: MONGO_USERNAME
             - name: MONGO_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: mongo-password
+                  name: spaas-mongo
                   key: MONGO_PASSWORD
             - name: AUTHAPI_ENDPOINT
               value: http://authserver:3000

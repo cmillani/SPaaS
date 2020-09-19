@@ -27,5 +27,8 @@ localKeys:
 serverKeys:
 	sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout ./front-end/server.key -out ./front-end/server.crt -config cadumillani.conf
 
+localKubeKeys:
+	openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout ./k8s/dev/server.key -out ./k8s/dev/server.crt -config spaas.conf
+
 deploy:
 	rsync -Cravpe ssh ./ ec2-user@spaas:/home/ec2-user/spaas/

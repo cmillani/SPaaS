@@ -32,12 +32,12 @@ spec:
             - name: MINIO_ACCESS_KEY
               valueFrom:
                 secretKeyRef:
-                  name: minio-access-key
+                  name: spaas-minio
                   key: MINIO_ACCESS_KEY
             - name: MINIO_SECRET_KEY
               valueFrom:
                 secretKeyRef:
-                  name: minio-secret-key
+                  name: spaas-minio
                   key: MINIO_SECRET_KEY
           image: minio/minio
           name: minio
