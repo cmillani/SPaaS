@@ -10,3 +10,30 @@ secretGenerator:
   files:
   - tls.key
   - tls.crt
+configMapGenerator:
+- name: spaas-urls
+  literals:
+  - AUTHAPI_ENDPOINT=https://auth.spaas.local
+  - FRONTEND_ENDPOINT=https://web.spaas.local
+  - API_ENDPOINT=https://api.spaas.local
+resources:
+- minio-persistentvolumeclaim.yaml
+- minio-service.yaml
+- minio-deployment.yaml #
+- mongo-persistentvolumeclaim.yaml
+- mongo-service.yaml
+- mongo-deployment.yaml #
+- redis-persistentvolumeclain.yaml
+- redis-service.yaml
+- redis-deployment.yaml #
+- neo4j-persistentvolumeclaim.yaml
+- neo4j-service.yaml
+- neo4j-deployment.yaml #
+- authserver-service.yaml
+- authserver-deployment.yaml #
+- backend-service.yaml
+- backend-deployment.yaml #
+- frontend-service.yaml
+- frontend-deployment.yaml #
+- worker-deployment.yaml #
+- spaas-ingress.yaml #

@@ -24,10 +24,7 @@ spec:
         io.kompose.service: backend
     spec:
       containers:
-        - args:
-            - python3
-            - main.py
-          env:
+        - env:
             - name: MINIO_SECRET_KEY
               valueFrom:
                 secretKeyRef:

@@ -1,0 +1,33 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: example-ingress
+spec:
+  tls:
+  - hosts:
+      - web.spaas.local
+      - auth.spaas.local
+      - api.spaas.local
+    secretName: spaas-tls
+  rules:
+  - host: web.spaas.local
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: frontend
+          servicePort: 80
+  - host: auth.spaas.local
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: authserver
+          servicePort: 3000
+  - host: api.spaas.local
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: backend
+          servicePort: 80

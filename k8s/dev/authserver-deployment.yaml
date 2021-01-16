@@ -42,9 +42,15 @@ spec:
             - name: SPASS_CONNECTION_STRING
               value: mongodb://$(MONGO_USERNAME):$(MONGO_PASSWORD)@mongo:27017/?ssl=false
             - name: EXPOSED_AUTHAPI_ENDPOINT
-              value: http://localhost:3000
+              valueFrom:
+                configMapKeyRef:
+                  name: spaas-urls
+                  key: AUTHAPI_ENDPOINT
             - name: FRONT_ENDPOINT
-              value: https://localhost
+              valueFrom:
+                configMapKeyRef:
+                  name: spaas-urls
+                  key: FRONTEND_ENDPOINT
           image: localhost:5000/authserver
           name: authserver
           resources: {}

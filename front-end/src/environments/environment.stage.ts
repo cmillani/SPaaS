@@ -1,11 +1,11 @@
 export const environment = {
   production: false,
 
-  frontend: 'https://localhost',
+  frontend: 'https://web.spaas.local',
 
-  authApiPath: 'https://localhost:3000',
+  authApiPath: 'https://auth.spaas.local',
 
-  apiUrl: 'https://localhost:5000',
+  apiUrl: 'https://api.spaas.local',
 
   uploadDataEndpoint: '/api/data/',
   getFilesEndpoint: '/api/data/',

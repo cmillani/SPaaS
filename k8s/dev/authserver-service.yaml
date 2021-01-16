@@ -10,6 +10,6 @@ metadata:
   name: authserver
 spec:
   ports:
-    - port: 9000
+    - port: 3000
   selector:
     io.kompose.service: authserver

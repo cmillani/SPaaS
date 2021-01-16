@@ -41,8 +41,8 @@ Enable the repository addon if not enabled, and if using minikube start using `-
 Then add the project images (remote images k8s can pull, so we can push only the project ones) to the k8s repository: (see [this link](https://minikube.sigs.k8s.io/docs/handbook/registry/) for more information)
 
 ```sh
-docker image tag <image> localhost:5000/<image> #registry addon must be enabled and exposed, see link above
-docker push localhost:5000/<image>
+docker-compose -f docker-compose.yml -f docker-compose.stage.yml build
+docker-compose push #registry addon must be enabled and exposed, see link above
 ```
 
 This requires setting image on `deployments` to `localhost:5000/<image>`.
@@ -50,6 +50,16 @@ This requires setting image on `deployments` to `localhost:5000/<image>`.
 ### Setting up secrets
 Create the `.env` files from the provided `.env.sample` on `k8s/dev`, and run `make localKubeKeys`.
 Then, simply run `kubectl apply -k k8s/dev`
+
+### Configuring hostname
+Edit `/etc/hosts` to contain the following line
+
+```
+192.168.39.108  web.spaas.local
+192.168.39.108  api.spaas.local
+192.168.39.108  auth.spaas.local
+```
+Where the ip address is the ingress ip (run `kubectl get ingress` to discover the ip)
 
 ## With Docker
 
